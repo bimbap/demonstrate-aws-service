@@ -106,15 +106,6 @@ aws s3 cp index.html s3://pustaka-archive-demo-2026/index.html \
 
 ---
 
-### Best Practice (Optional): Amazon CloudFront CDN + S3 OAC
-
-For production and LKS best practice:
-- Keep the S3 Bucket **private** (Block All Public Access: **Enabled**).
-- Create an **Amazon CloudFront Distribution** pointing to the S3 bucket origin.
-- Enable **Origin Access Control (OAC)** so only CloudFront can read from the S3 bucket via HTTPS with global caching and custom domain support.
-
----
-
 ## 💻 Local Preview
 
 Simply double-click [`index.html`](file:///m:/lks/task/demonstrates-material/s3/index.html) in your file explorer or open it in any modern browser (Chrome, Edge, Firefox, Safari). Zero dependencies required.
