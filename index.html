@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pustaka — Digital Book Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Warm Obsidian & Editorial Library Theme */
+      --bg: #090a0d;
+      --bg-surface: #101217;
+      --bg-surface-elevated: #161a22;
+      --bg-surface-hover: #1c212c;
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.14);
+      --border-focus: #f59e0b;
+
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+
+      /* Elegant Library Palette */
+      --amber: #f59e0b;
+      --amber-dark: #b45309;
+      --amber-subtle: rgba(245, 158, 11, 0.12);
+      --emerald: #10b981;
+      --emerald-subtle: rgba(16, 185, 129, 0.12);
+      --sapphire: #3b82f6;
+      --sapphire-subtle: rgba(59, 130, 246, 0.12);
+      --rose: #f43f5e;
+      --rose-subtle: rgba(244, 63, 94, 0.12);
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --font-ui: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-editorial: 'Newsreader', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      line-height: 1.5;
+      background-image: 
+        radial-gradient(circle at 50% -10%, rgba(245, 158, 11, 0.08), transparent 600px),
+        radial-gradient(circle at 90% 90%, rgba(59, 130, 246, 0.04), transparent 500px);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 2.25rem 1.5rem 5rem;
+    }
+
+    @media (max-width: 768px) {
+      .app {
+        padding: 1.25rem 1rem 4rem;
+      }
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      padding-bottom: 1.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-emblem {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #d97706, #92400e);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      box-shadow: 0 8px 24px -4px rgba(217, 119, 6, 0.4);
+      flex-shrink: 0;
+    }
+
+    .brand-emblem svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .brand-title {
+      font-family: var(--font-editorial);
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+
+    .brand-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      padding: 0.65rem 1.25rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.25s var(--ease);
+      border: 1px solid transparent;
+      outline: none;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #d97706, #b45309);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(217, 119, 6, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px rgba(217, 119, 6, 0.45);
+    }
+
+    .btn-ghost {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border-color: var(--border-subtle);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text);
+      border-color: var(--border-medium);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #e11d48, #be123c);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(225, 29, 72, 0.35);
+      border: 1px solid rgba(225, 29, 72, 0.4);
+    }
+
+    .btn-danger:hover {
+      background: linear-gradient(135deg, #f43f5e, #e11d48);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px rgba(225, 29, 72, 0.45);
+    }
+
+    .btn-danger-icon {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: var(--radius-full);
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .btn-danger-icon:hover {
+      background: var(--rose-subtle);
+      color: #fb7185;
+      border-color: rgba(244, 63, 94, 0.3);
+    }
+
+
+    /* Filter & Search Bar */
+    .controls-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .search-input-box {
+      position: relative;
+      flex: 1;
+      min-width: 270px;
+      max-width: 420px;
+    }
+
+    .search-input-box svg {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .search-input-box input {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 0.68rem 1rem 0.68rem 2.6rem;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s var(--ease);
+    }
+
+    .search-input-box input:focus {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    }
+
+    .category-pills {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .category-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .category-pill {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.46rem 0.95rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s var(--ease);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .category-pill:hover {
+      color: var(--text);
+      border-color: var(--border-medium);
+      background: var(--bg-surface-elevated);
+    }
+
+    .category-pill.active {
+      background: #d97706;
+      color: #fff;
+      border-color: #d97706;
+      box-shadow: 0 2px 10px rgba(217, 119, 6, 0.35);
+    }
+
+    .category-pill .badge-count {
+      font-size: 0.68rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: var(--radius-full);
+      background: rgba(0, 0, 0, 0.25);
+      font-family: var(--font-mono);
+    }
+
+    .catalog-count-text {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    .catalog-count-text strong {
+      color: var(--text);
+      font-family: var(--font-mono);
+    }
+
+    /* Books Grid */
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .books-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Book Card Component */
+    .book-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+      transition: all 0.3s var(--ease);
+      box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .book-card:hover {
+      border-color: rgba(245, 158, 11, 0.35);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 25px -10px rgba(245, 158, 11, 0.15);
+    }
+
+    /* Card Top: Book Cover Artwork + Editorial Details */
+    .card-main {
+      display: flex;
+      gap: 1.25rem;
+    }
+
+    /* Realistic Editorial Book Cover */
+    .cover-art-container {
+      width: 105px;
+      height: 155px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      position: relative;
+      box-shadow: 
+        -4px 4px 12px rgba(0, 0, 0, 0.6),
+        inset 4px 0 6px rgba(255, 255, 255, 0.18),
+        inset -2px 0 4px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0.75rem 0.65rem;
+      color: #fff;
+      overflow: hidden;
+      transition: transform 0.4s var(--ease);
+    }
+
+    .book-card:hover .cover-art-container {
+      transform: rotateY(-8deg) scale(1.02);
+    }
+
+    /* Book spine lighting */
+    .cover-art-container::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 8px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.25), rgba(0,0,0,0.3));
+    }
+
+    /* Realistic Book Editions Color Schemes */
+    .cover-habits {
+      background: linear-gradient(145deg, #18181b, #27272a);
+      border: 1px solid #3f3f46;
+      color: #fafafa;
+    }
+    .cover-sapiens {
+      background: linear-gradient(145deg, #2c1810, #451a03);
+      color: #fef3c7;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .cover-money {
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      color: #38bdf8;
+      border: 1px solid #334155;
+    }
+    .cover-teras {
+      background: linear-gradient(145deg, #c2410c, #9a3412);
+      color: #fff7ed;
+      border: 1px solid #ea580c;
+    }
+    .cover-deepwork {
+      background: linear-gradient(145deg, #1c1917, #292524);
+      color: #facc15;
+      border: 1px solid #44403c;
+    }
+    .cover-bumi {
+      background: linear-gradient(145deg, #422006, #713f12);
+      color: #fef08a;
+      border: 1px solid #854d0e;
+    }
+
+    .cover-tag-mini {
+      font-size: 0.52rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      padding-left: 6px;
+    }
+
+    .cover-book-title {
+      font-family: var(--font-editorial);
+      font-size: 0.85rem;
+      font-weight: 700;
+      line-height: 1.2;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      padding-left: 6px;
+    }
+
+    .cover-author-mini {
+      font-size: 0.58rem;
+      opacity: 0.75;
+      padding-left: 6px;
+      font-family: var(--font-ui);
+    }
+
+    /* Book Info */
+    .card-detail {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .card-header-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .category-chip {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .cat-selfdev { background: var(--amber-subtle); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .cat-history { background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .cat-finance { background: var(--emerald-subtle); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .cat-philosophy { background: rgba(249, 115, 22, 0.12); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.3); }
+    .cat-literature { background: var(--sapphire-subtle); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+
+    .book-title-heading {
+      font-family: var(--font-editorial);
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: #fff;
+      margin-bottom: 0.25rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .book-author-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 0.65rem;
+    }
+
+    .book-publishing-info {
+      margin-top: auto;
+      font-size: 0.74rem;
+      color: var(--text-dim);
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .book-publishing-info strong {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    /* S3 Object Key Strip */
+    .s3-object-strip {
+      background: #040507;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .s3-key-path {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #38bdf8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .s3-key-path svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      color: #38bdf8;
+    }
+
+    .copy-icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      padding: 0.2rem;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+
+    .copy-icon-btn:hover {
+      color: var(--text);
+    }
+
+    /* Card Footer Actions */
+    .card-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-top: auto;
+    }
+
+    .card-actions-row .btn-primary-card {
+      flex: 1;
+      background: var(--bg-surface-elevated);
+      color: #fff;
+      border: 1px solid var(--border-medium);
+      padding: 0.55rem 0.95rem;
+      font-size: 0.8rem;
+    }
+
+    .card-actions-row .btn-primary-card:hover {
+      background: #d97706;
+      border-color: #d97706;
+      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+    }
+
+    /* Empty State */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4.5rem 1.5rem;
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-lg);
+    }
+
+    .empty-state svg {
+      width: 44px;
+      height: 44px;
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 5, 8, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: grid;
+      place-items: center;
+      padding: 1.5rem;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s var(--ease);
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85);
+      transform: scale(0.96) translateY(8px);
+      transition: transform 0.25s var(--ease);
+      overflow: hidden;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-backdrop.open .modal-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-full);
+      display: grid;
+      place-items: center;
+      transition: all 0.15s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+
+    .form-control {
+      width: 100%;
+      background: #090b10;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.65rem 0.9rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    @media (max-width: 520px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background: rgba(9, 10, 13, 0.6);
+    }
+
+    /* Booking Confirmation Pass / Ticket */
+    .booking-pass {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(245, 158, 11, 0.05));
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: var(--radius-md);
+      padding: 1.15rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .pass-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .pass-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.15);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .pass-title {
+      font-family: var(--font-editorial);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .pass-author {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .loan-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      padding-top: 0.85rem;
+      border-top: 1px dashed rgba(255, 255, 255, 0.12);
+      margin-top: 0.25rem;
+    }
+
+    .loan-detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .loan-detail-label {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+
+    .loan-detail-val {
+      font-size: 0.88rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .loan-slider-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.95rem 1.15rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Delete Confirmation Modal Styles */
+    .delete-preview-card {
+      background: rgba(244, 63, 94, 0.05);
+      border: 1px solid rgba(244, 63, 94, 0.22);
+      border-radius: var(--radius-md);
+      padding: 1.15rem;
+      margin-bottom: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .delete-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fb7185;
+      background: var(--rose-subtle);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      width: fit-content;
+    }
+
+    .delete-book-title {
+      font-family: var(--font-editorial);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .delete-book-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .delete-warning-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .slider-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.65rem;
+      font-size: 0.82rem;
+    }
+
+    .slider-header strong {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--amber);
+      cursor: pointer;
+      height: 6px;
+      border-radius: 4px;
+      background: #181b22;
+    }
+
+    .duration-presets {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .preset-chip {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      padding: 0.35rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s var(--ease);
+    }
+
+    .preset-chip:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+      color: var(--text);
+    }
+
+    .preset-chip.active {
+      background: var(--amber-subtle);
+      border-color: var(--amber);
+      color: #fbbf24;
+    }
+
+    .loan-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: rgba(245, 158, 11, 0.06);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Toast */
+    .toast-tray {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .toast-item {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-medium);
+      padding: 0.75rem 1.15rem;
+      border-radius: var(--radius-full);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+      font-size: 0.82rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      animation: toastIn 0.3s var(--ease) forwards;
+      pointer-events: auto;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app">
+    <!-- Header -->
+    <header>
+      <div class="brand-wrap">
+        <div class="brand-emblem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-0.5-0.05"/>
+            <path d="M6 6h10"/>
+            <path d="M6 10h7"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">Pustaka</div>
+          <p class="brand-subtitle">Digital Book Archive</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="toggleAddModal(true)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Book
+        </button>
+      </div>
+    </header>
+
+    <!-- Controls: Search & Category Pills -->
+    <div class="controls-wrap">
+      <div class="search-input-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search by book title, author, or publisher..." oninput="handleSearch()">
+      </div>
+
+      <div class="category-pills" id="categoryTabs">
+        <button class="category-pill active" onclick="setCategory('all', this)">
+          All Books <span class="badge-count" id="countAll">6</span>
+        </button>
+        <button class="category-pill" onclick="setCategory('Self Development', this)">
+          Self Development <span class="badge-count" id="countSelf">2</span>
+        </button>
+        <button class="category-pill" onclick="setCategory('Philosophy', this)">
+          Philosophy <span class="badge-count" id="countPhil">1</span>
+        </button>
+        <button class="category-pill" onclick="setCategory('Finance', this)">
+          Finance <span class="badge-count" id="countFin">1</span>
+        </button>
+        <button class="category-pill" onclick="setCategory('History', this)">
+          History <span class="badge-count" id="countHist">1</span>
+        </button>
+        <button class="category-pill" onclick="setCategory('Literature', this)">
+          Literature <span class="badge-count" id="countLit">1</span>
+        </button>
+      </div>
+
+      <div class="catalog-count-text">
+        Showing <strong id="visibleCount">6</strong> books
+      </div>
+    </div>
+
+    <!-- Books Card Grid -->
+    <div class="books-grid" id="booksGrid">
+      <!-- Dynamic Rendering via JS -->
+    </div>
+  </div>
+
+  <!-- Modal: Add New Book -->
+  <div class="modal-backdrop" id="addModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Tambah Buku Baru ke Arsip
+        </h3>
+        <button class="modal-close" onclick="toggleAddModal(false)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <form id="addBookForm" onsubmit="submitNewBook(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Book Title <span style="color: var(--rose);">*</span></label>
+            <input type="text" id="fTitle" class="form-control" placeholder="e.g. Man's Search for Meaning" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Author <span style="color: var(--rose);">*</span></label>
+              <input type="text" id="fAuthor" class="form-control" placeholder="Viktor E. Frankl" required>
+            </div>
+            <div class="form-group">
+              <label>Category <span style="color: var(--rose);">*</span></label>
+              <select id="fCategory" class="form-control">
+                <option value="Self Development">Self Development</option>
+                <option value="Philosophy">Philosophy</option>
+                <option value="Finance">Finance</option>
+                <option value="History">History</option>
+                <option value="Literature">Literature</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Publisher <small style="color: var(--text-dim);">(Optional)</small></label>
+              <input type="text" id="fPublisher" class="form-control" placeholder="Beacon Press">
+            </div>
+            <div class="form-group">
+              <label>Year <small style="color: var(--text-dim);">(Optional)</small></label>
+              <input type="number" id="fYear" class="form-control" value="2024" min="1900" max="2030">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>ISBN / Identifier <small style="color: var(--text-dim);">(Optional)</small></label>
+            <input type="text" id="fIsbn" class="form-control" placeholder="978-0807014295">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="toggleAddModal(false)">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnUploadSubmit">Simpan Buku</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Peminjaman Berhasil / Loan Confirmation Popup -->
+  <div class="modal-backdrop" id="loanModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981"/>
+            <polyline points="16 9 10.5 15 8 12.5"/>
+          </svg>
+          Peminjaman Berhasil!
+        </h3>
+        <button class="modal-close" onclick="toggleLoanModal(false)" title="Tutup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Loan Receipt Ticket -->
+        <div class="booking-pass">
+          <div class="pass-header">
+            <span class="pass-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Status: Aktif Dipinjam
+            </span>
+            <span style="font-size: 0.76rem; font-family: var(--font-mono); color: var(--amber); font-weight: 600;" id="loanTicketCode">#PSTK-849201</span>
+          </div>
+          <div style="margin-top: 0.35rem;">
+            <div class="pass-title" id="borrowBookTitle">Book Title</div>
+            <div class="pass-author" id="borrowBookAuthor">Author Name • Category</div>
+          </div>
+          <div class="loan-details-grid">
+            <div class="loan-detail-item">
+              <span class="loan-detail-label">Tanggal Pinjam</span>
+              <strong class="loan-detail-val" id="loanBorrowDate">19 Okt 2026</strong>
+            </div>
+            <div class="loan-detail-item">
+              <span class="loan-detail-label">Batas Pengembalian</span>
+              <strong class="loan-detail-val" id="loanDueDate" style="color: var(--amber);">26 Okt 2026</strong>
+            </div>
+            <div class="loan-detail-item">
+              <span class="loan-detail-label">Durasi Peminjaman</span>
+              <strong class="loan-detail-val" id="ticketLoanDays">7 Hari</strong>
+            </div>
+            <div class="loan-detail-item">
+              <span class="loan-detail-label">Tipe Layanan</span>
+              <strong class="loan-detail-val" style="color: #38bdf8;">Koleksi Digital</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Duration Slider (Hari / Days) -->
+        <div class="loan-slider-box">
+          <div class="slider-header">
+            <span style="font-weight: 600; color: var(--text);">Pilih Durasi Peminjaman:</span>
+            <strong id="sliderLoanDaysText" style="color: var(--amber);">7 Hari</strong>
+          </div>
+          <div class="slider-row">
+            <span style="font-size: 0.75rem; color: var(--text-dim); min-width: 44px;">1 Hari</span>
+            <input type="range" id="loanDaysSlider" min="1" max="30" value="7" step="1" oninput="onDurationSliderChange(this.value)">
+            <span style="font-size: 0.75rem; color: var(--text-dim); min-width: 50px; text-align: right;">30 Hari</span>
+          </div>
+          <div class="duration-presets" id="durationPresets">
+            <button type="button" class="preset-chip" onclick="setLoanDays(3)">3 Hari</button>
+            <button type="button" class="preset-chip active" onclick="setLoanDays(7)">7 Hari</button>
+            <button type="button" class="preset-chip" onclick="setLoanDays(14)">14 Hari</button>
+            <button type="button" class="preset-chip" onclick="setLoanDays(30)">30 Hari</button>
+          </div>
+        </div>
+
+        <div class="loan-notice">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; color: var(--amber); margin-top: 2px;">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <div id="loanNoticeText">
+            Buku dipinjam selama 7 hari. Mohon kembalikan buku sebelum batas waktu yang ditentukan.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="confirmLoan()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Konfirmasi & Selesai
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Konfirmasi Hapus Buku -->
+  <div class="modal-backdrop" id="deleteModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2.5">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            <line x1="10" y1="11" x2="10" y2="17"/>
+            <line x1="14" y1="11" x2="14" y2="17"/>
+          </svg>
+          Hapus Buku dari Arsip?
+        </h3>
+        <button class="modal-close" onclick="toggleDeleteModal(false)" title="Tutup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="delete-preview-card">
+          <span class="delete-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            Konfirmasi Hapus
+          </span>
+          <div class="delete-book-title" id="delBookTitle">Judul Buku</div>
+          <div class="delete-book-meta" id="delBookAuthor">oleh Penulis • Kategori</div>
+          <div style="font-size: 0.74rem; color: var(--text-dim); font-family: var(--font-mono); margin-top: 0.2rem;" id="delBookDetails">
+            Penerbit: Independent • ISBN: 978-000000000
+          </div>
+        </div>
+
+        <div class="delete-warning-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2" style="flex-shrink:0; margin-top: 2px;">
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <div>
+            Tindakan ini akan menghapus data buku dari katalog digital Pustaka. Data yang telah dihapus tidak dapat dipulihkan.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="gap: 0.75rem;">
+        <button type="button" class="btn btn-ghost" onclick="toggleDeleteModal(false)">Batal</button>
+        <button type="button" class="btn btn-danger" onclick="confirmDeleteBook()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          Ya, Hapus Buku
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Toast Notification Tray -->
+  <div class="toast-tray" id="toastTray"></div>
+
+  <script>
+    // Real Books Dataset (Universal Best-Sellers & Literature)
+    const REAL_BOOKS = [
+      {
+        id: "b1",
+        title: "Atomic Habits",
+        author: "James Clear",
+        category: "Self Development",
+        publisher: "Avery / Penguin Random House",
+        year: 2018,
+        isbn: "978-0735211292",
+        s3Key: "books/atomic-habits-james-clear.pdf",
+        coverClass: "cover-habits",
+        fileSize: "4.8 MB"
+      },
+      {
+        id: "b2",
+        title: "Sapiens: A Brief History of Humankind",
+        author: "Yuval Noah Harari",
+        category: "History",
+        publisher: "HarperCollins",
+        year: 2014,
+        isbn: "978-0062316097",
+        s3Key: "books/sapiens-yuval-noah-harari.pdf",
+        coverClass: "cover-sapiens",
+        fileSize: "9.2 MB"
+      },
+      {
+        id: "b3",
+        title: "The Psychology of Money",
+        author: "Morgan Housel",
+        category: "Finance",
+        publisher: "Harriman House",
+        year: 2020,
+        isbn: "978-0857197689",
+        s3Key: "books/psychology-of-money-morgan-housel.pdf",
+        coverClass: "cover-money",
+        fileSize: "3.6 MB"
+      },
+      {
+        id: "b4",
+        title: "Filosofi Teras",
+        author: "Henry Manampiring",
+        category: "Philosophy",
+        publisher: "Penerbit Buku Kompas",
+        year: 2018,
+        isbn: "978-6024125189",
+        s3Key: "books/filosofi-teras-henry-manampiring.pdf",
+        coverClass: "cover-teras",
+        fileSize: "5.4 MB"
+      },
+      {
+        id: "b5",
+        title: "Deep Work: Rules for Focused Success",
+        author: "Cal Newport",
+        category: "Self Development",
+        publisher: "Grand Central Publishing",
+        year: 2016,
+        isbn: "978-1455586691",
+        s3Key: "books/deep-work-cal-newport.pdf",
+        coverClass: "cover-deepwork",
+        fileSize: "4.1 MB"
+      },
+      {
+        id: "b6",
+        title: "Bumi Manusia",
+        author: "Pramoedya Ananta Toer",
+        category: "Literature",
+        publisher: "Lentera Dipantara",
+        year: 1980,
+        isbn: "978-9799731210",
+        s3Key: "books/bumi-manusia-pramoedya.pdf",
+        coverClass: "cover-bumi",
+        fileSize: "6.8 MB"
+      }
+    ];
+
+    let books = JSON.parse(localStorage.getItem('pustaka_books_v3')) || REAL_BOOKS;
+    let selectedCategory = 'all';
+    let filterQuery = '';
+
+    const categoryChipMap = {
+      'Self Development': 'cat-selfdev',
+      'Philosophy': 'cat-philosophy',
+      'Finance': 'cat-finance',
+      'History': 'cat-history',
+      'Literature': 'cat-literature'
+    };
+
+    function renderBooks() {
+      const grid = document.getElementById('booksGrid');
+      const filtered = books.filter(b => {
+        const matchesCategory = (selectedCategory === 'all' || b.category === selectedCategory);
+        const q = filterQuery.toLowerCase();
+        const matchesSearch = !q || 
+          b.title.toLowerCase().includes(q) || 
+          b.author.toLowerCase().includes(q) || 
+          (b.publisher && b.publisher.toLowerCase().includes(q)) || 
+          (b.isbn && b.isbn.includes(q));
+        return matchesCategory && matchesSearch;
+      });
+
+      document.getElementById('visibleCount').textContent = filtered.length;
+      updateCounts();
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;">No Books Found</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+              No titles match your active filter or search keywords.
+            </p>
+            <button class="btn btn-primary" onclick="toggleAddModal(true)">+ Add New Book</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(b => {
+        const chipClass = categoryChipMap[b.category] || 'cat-selfdev';
+        return `
+          <div class="book-card">
+            <div class="card-main">
+              <div class="cover-art-container ${b.coverClass}">
+                <span class="cover-tag-mini">${b.category}</span>
+                <div class="cover-book-title">${escapeHtml(b.title)}</div>
+                <span class="cover-author-mini">${escapeHtml(b.author)}</span>
+              </div>
+              <div class="card-detail">
+                <div class="card-header-line">
+                  <span class="category-chip ${chipClass}">${b.category}</span>
+                  <span style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--text-dim);">${b.fileSize}</span>
+                </div>
+                <h3 class="book-title-heading" title="${escapeHtml(b.title)}">${escapeHtml(b.title)}</h3>
+                <p class="book-author-text">by ${escapeHtml(b.author)}</p>
+                <div class="book-publishing-info">
+                  <span>Publisher: <strong>${escapeHtml(b.publisher || 'Unknown')}</strong></span>
+                  <span>Year: <strong>${b.year}</strong> &bull; ISBN: <strong>${escapeHtml(b.isbn || 'N/A')}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-actions-row">
+              <button class="btn btn-primary-card" onclick="openBorrowModal('${b.id}')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-0.5-0.05"/>
+                  <path d="M9 10h6"/>
+                </svg>
+                Pinjam Buku
+              </button>
+              <button class="btn btn-danger-icon" onclick="deleteBookItem('${b.id}')" title="Hapus Buku">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateCounts() {
+      document.getElementById('countAll').textContent = books.length;
+      document.getElementById('countSelf').textContent = books.filter(b => b.category === 'Self Development').length;
+      document.getElementById('countPhil').textContent = books.filter(b => b.category === 'Philosophy').length;
+      document.getElementById('countFin').textContent = books.filter(b => b.category === 'Finance').length;
+      document.getElementById('countHist').textContent = books.filter(b => b.category === 'History').length;
+      document.getElementById('countLit').textContent = books.filter(b => b.category === 'Literature').length;
+    }
+
+    function setCategory(cat, el) {
+      selectedCategory = cat;
+      document.querySelectorAll('#categoryTabs .category-pill').forEach(btn => btn.classList.remove('active'));
+      if (el) el.classList.add('active');
+      renderBooks();
+    }
+
+    function handleSearch() {
+      filterQuery = document.getElementById('searchInput').value;
+      renderBooks();
+    }
+
+    // Modal Add
+    function toggleAddModal(show) {
+      const el = document.getElementById('addModal');
+      if (show) {
+        el.classList.add('open');
+        document.getElementById('fTitle').focus();
+      } else {
+        el.classList.remove('open');
+        document.getElementById('addBookForm').reset();
+      }
+    }
+
+    function submitNewBook(e) {
+      e.preventDefault();
+      const title = document.getElementById('fTitle').value.trim();
+      const author = document.getElementById('fAuthor').value.trim();
+      const category = document.getElementById('fCategory').value;
+      const publisher = document.getElementById('fPublisher').value.trim() || 'Independent';
+      const year = parseInt(document.getElementById('fYear').value) || 2024;
+      const isbn = document.getElementById('fIsbn').value.trim() || `ISBN-${Math.floor(100000000 + Math.random() * 900000000)}`;
+
+      const btn = document.getElementById('btnUploadSubmit');
+      btn.disabled = true;
+      btn.textContent = "Menyimpan ke Arsip...";
+
+      setTimeout(() => {
+        const coverClasses = ['cover-habits', 'cover-sapiens', 'cover-money', 'cover-teras', 'cover-deepwork', 'cover-bumi'];
+        const randomCover = coverClasses[Math.floor(Math.random() * coverClasses.length)];
+
+        const slug = title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 24);
+        const s3Key = `books/${Date.now()}-${slug}.pdf`;
+
+        const newBook = {
+          id: "bk_" + Date.now(),
+          title,
+          author,
+          category,
+          publisher,
+          year,
+          isbn,
+          s3Key,
+          coverClass: randomCover,
+          fileSize: (Math.random() * 6 + 3).toFixed(1) + " MB"
+        };
+
+        books.unshift(newBook);
+        saveState();
+        btn.disabled = false;
+        btn.textContent = "Simpan Buku";
+        toggleAddModal(false);
+        renderBooks();
+        showToast(`Buku "${newBook.title}" berhasil ditambahkan ke katalog`);
+      }, 550);
+    }
+
+    // Delete Modal
+    let bookToDeleteId = null;
+
+    function deleteBookItem(id) {
+      const b = books.find(x => x.id === id);
+      if (!b) return;
+
+      bookToDeleteId = id;
+      document.getElementById('delBookTitle').textContent = b.title;
+      document.getElementById('delBookAuthor').textContent = `oleh ${b.author} • ${b.category}`;
+      document.getElementById('delBookDetails').textContent = `Penerbit: ${b.publisher || 'Independent'} • ISBN: ${b.isbn || 'N/A'}`;
+
+      toggleDeleteModal(true);
+    }
+
+    function confirmDeleteBook() {
+      if (!bookToDeleteId) return;
+      const b = books.find(x => x.id === bookToDeleteId);
+      const title = b ? b.title : 'Buku';
+
+      books = books.filter(x => x.id !== bookToDeleteId);
+      saveState();
+      renderBooks();
+      toggleDeleteModal(false);
+      bookToDeleteId = null;
+
+      showToast(`Buku "${title}" berhasil dihapus dari katalog`);
+    }
+
+    function toggleDeleteModal(show) {
+      const modal = document.getElementById('deleteModal');
+      if (modal) modal.classList.toggle('open', show);
+      if (!show) bookToDeleteId = null;
+    }
+
+    let currentLoanDays = 7;
+    let currentBorrowBook = null;
+
+    // Borrow Modal (Peminjaman Berhasil)
+    function openBorrowModal(id) {
+      currentBorrowBook = books.find(x => x.id === id);
+      if (!currentBorrowBook) return;
+
+      document.getElementById('borrowBookTitle').textContent = currentBorrowBook.title;
+      document.getElementById('borrowBookAuthor').textContent = `oleh ${currentBorrowBook.author} • ${currentBorrowBook.category}`;
+      
+      // Random loan ticket ID
+      const ticketNum = Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('loanTicketCode').textContent = `#PSTK-${ticketNum}`;
+
+      // Reset to 7 days
+      currentLoanDays = 7;
+      document.getElementById('loanDaysSlider').value = 7;
+      updateLoanDurationDisplay(7);
+
+      toggleLoanModal(true);
+    }
+
+    function onDurationSliderChange(val) {
+      updateLoanDurationDisplay(parseInt(val, 10));
+    }
+
+    function setLoanDays(days) {
+      document.getElementById('loanDaysSlider').value = days;
+      updateLoanDurationDisplay(days);
+    }
+
+    function updateLoanDurationDisplay(days) {
+      currentLoanDays = days;
+      const daysText = `${days} Hari`;
+      document.getElementById('sliderLoanDaysText').textContent = daysText;
+      document.getElementById('ticketLoanDays').textContent = daysText;
+
+      const now = new Date();
+      const returnDate = new Date();
+      returnDate.setDate(now.getDate() + days);
+
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      const fmt = d => `${String(d.getDate()).padStart(2, '0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
+
+      document.getElementById('loanBorrowDate').textContent = fmt(now);
+      document.getElementById('loanDueDate').textContent = fmt(returnDate);
+
+      const notice = document.getElementById('loanNoticeText');
+      if (notice) {
+        notice.textContent = `Buku dipinjam selama ${daysText}. Mohon kembalikan buku sebelum ${fmt(returnDate)}.`;
+      }
+
+      // Update active preset chip
+      document.querySelectorAll('#durationPresets .preset-chip').forEach(btn => {
+        const d = parseInt(btn.textContent, 10);
+        btn.classList.toggle('active', d === days);
+      });
+    }
+
+    function confirmLoan() {
+      if (currentBorrowBook) {
+        showToast(`Buku "${currentBorrowBook.title}" berhasil dipinjam selama ${currentLoanDays} hari!`);
+      }
+      toggleLoanModal(false);
+    }
+
+    function toggleLoanModal(show) {
+      const el = document.getElementById('loanModal');
+      if (el) el.classList.toggle('open', show);
+    }
+
+    function copyText(str) {
+      navigator.clipboard.writeText(str).then(() => {
+        showToast(`Copied ${str}`);
+      });
+    }
+
+    // Toast
+    function showToast(msg) {
+      const tray = document.getElementById('toastTray');
+      const item = document.createElement('div');
+      item.className = 'toast-item';
+      item.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>${escapeHtml(msg)}</span>
+      `;
+      tray.appendChild(item);
+      setTimeout(() => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(8px)';
+        item.style.transition = 'all 0.25s var(--ease)';
+        setTimeout(() => item.remove(), 250);
+      }, 3500);
+    }
+
+    function saveState() {
+      localStorage.setItem('pustaka_books_v3', JSON.stringify(books));
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Keyboard & Backdrop triggers
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        toggleAddModal(false);
+        toggleLoanModal(false);
+        toggleDeleteModal(false);
+      }
+    });
+
+    document.querySelectorAll('.modal-backdrop').forEach(m => {
+      m.addEventListener('click', (e) => {
+        if (e.target === m) {
+          toggleAddModal(false);
+          toggleLoanModal(false);
+          toggleDeleteModal(false);
+        }
+      });
+    });
+
+    // Reset default seed if previous data was tech
+    if (books.some(b => b.category === 'cloud' || b.category === 'linux')) {
+      books = REAL_BOOKS;
+      saveState();
+    }
+
+    renderBooks();
+  </script>
+</body>
+</html>
