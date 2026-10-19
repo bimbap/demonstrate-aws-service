@@ -1,0 +1,3 @@
+# Ignore service folders on main branch (maintained in dedicated git branches: s3, ec2)
+ec2/
+s3/
