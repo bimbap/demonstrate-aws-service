@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow — Background Compute Engine (EC2 Demo)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #07090e;
+      --bg-surface: #0e121a;
+      --bg-surface-elevated: #151b26;
+      --bg-surface-hover: #1c2433;
+      
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-medium: rgba(255, 255, 255, 0.13);
+      --border-accent: rgba(56, 189, 248, 0.35);
+
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --cyan: #38bdf8;
+      --cyan-subtle: rgba(56, 189, 248, 0.12);
+      --emerald: #10b981;
+      --emerald-subtle: rgba(16, 185, 129, 0.12);
+      --amber: #f59e0b;
+      --amber-subtle: rgba(245, 158, 11, 0.12);
+      --rose: #f43f5e;
+      --rose-subtle: rgba(244, 63, 94, 0.12);
+      --indigo: #6366f1;
+
+      --font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(99, 102, 241, 0.06) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    .app-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1.75rem 1.5rem 4rem;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.95rem;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #0284c7, #6366f1);
+      border-radius: var(--radius-md);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35);
+    }
+
+    .brand-icon svg {
+      width: 22px;
+      height: 22px;
+      color: #fff;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .brand-title .badge-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 0.15rem 0.5rem;
+      background: var(--cyan-subtle);
+      color: var(--cyan);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: var(--radius-full);
+      letter-spacing: 0.04em;
+    }
+
+    .brand-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .header-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      background: rgba(16, 185, 129, 0.1);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 0.35rem 0.8rem;
+      border-radius: var(--radius-full);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.6rem 1.15rem;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s var(--ease);
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: #0284c7;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: #0369a1;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-medium);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-surface-hover);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+    }
+
+    .btn-ghost:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Compute Vitals HUD */
+    .vitals-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 992px) {
+      .vitals-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 540px) {
+      .vitals-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .vital-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .vital-card:hover {
+      border-color: var(--border-medium);
+    }
+
+    .vital-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .vital-header svg {
+      width: 17px;
+      height: 17px;
+      color: var(--cyan);
+    }
+
+    .vital-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.45rem;
+    }
+
+    .vital-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #fff;
+      font-family: var(--font-mono);
+      letter-spacing: -0.02em;
+    }
+
+    .vital-unit {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    /* Mini Progress/Meter Bar */
+    .vital-meter {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .vital-meter-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+      border-radius: var(--radius-full);
+      transition: width 0.4s var(--ease), background 0.4s var(--ease);
+    }
+
+    .vital-meter-fill.warn {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    }
+
+    .vital-meter-fill.danger {
+      background: linear-gradient(90deg, #ef4444, #f43f5e);
+    }
+
+    .vital-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+
+    /* Main Board Section */
+    .board-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .tabs-wrap {
+      display: flex;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.3rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.45rem 0.95rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: var(--bg-surface-elevated);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .tab-count {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-dim);
+    }
+
+    .tab-btn.active .tab-count {
+      background: var(--cyan-subtle);
+      color: var(--cyan);
+    }
+
+    .board-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    /* Jobs List Grid */
+    .jobs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .job-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.15rem 1.35rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1.25rem;
+      align-items: center;
+      transition: all 0.25s var(--ease);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .job-card:hover {
+      border-color: var(--border-medium);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .job-card {
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+      }
+    }
+
+    /* State indicator side border */
+    .job-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--text-dim);
+    }
+
+    .job-card.processing::before {
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+    }
+
+    .job-card.completed::before {
+      background: var(--emerald);
+    }
+
+    .job-card.queued::before {
+      background: var(--amber);
+    }
+
+    .job-icon-wrap {
+      width: 46px;
+      height: 46px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      flex-shrink: 0;
+    }
+
+    .job-card.completed .job-icon-wrap {
+      color: #34d399;
+      background: var(--emerald-subtle);
+    }
+
+    .job-card.processing .job-icon-wrap {
+      color: var(--cyan);
+      background: var(--cyan-subtle);
+      animation: pulseGlow 1.8s infinite;
+    }
+
+    .job-card.queued .job-icon-wrap {
+      color: var(--amber);
+      background: var(--amber-subtle);
+    }
+
+    .job-main-info {
+      min-width: 0;
+    }
+
+    .job-meta-line {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .job-id-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan);
+      background: var(--cyan-subtle);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .priority-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .priority-high {
+      background: var(--rose-subtle);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.25);
+    }
+
+    .priority-normal {
+      background: var(--cyan-subtle);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .priority-low {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-dim);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .job-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .job-subtext {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .job-subtext span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    /* Live Progress Bar on Processing Job */
+    .job-progress-wrap {
+      margin-top: 0.65rem;
+      max-width: 480px;
+    }
+
+    .job-progress-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--cyan);
+      margin-bottom: 0.3rem;
+    }
+
+    .job-progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .job-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+      border-radius: var(--radius-full);
+      transition: width 0.3s linear;
+    }
+
+    /* Job Actions & Status Column */
+    .job-actions-col {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .job-status-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+    }
+
+    .pill-processing {
+      background: var(--cyan-subtle);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .pill-completed {
+      background: var(--emerald-subtle);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .pill-queued {
+      background: var(--amber-subtle);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-action-icon {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-dim);
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-md);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-action-icon:hover {
+      color: #fff;
+      border-color: var(--border-medium);
+      background: var(--bg-surface-hover);
+    }
+
+    .btn-action-icon.danger:hover {
+      color: #f43f5e;
+      border-color: rgba(244, 63, 94, 0.3);
+      background: var(--rose-subtle);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1.5rem;
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-lg);
+    }
+
+    .empty-state svg {
+      width: 44px;
+      height: 44px;
+      color: var(--text-dim);
+      margin-bottom: 0.85rem;
+    }
+
+    .empty-state h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+    }
+
+    .empty-state p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 6, 10, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: grid;
+      place-items: center;
+      padding: 1.5rem;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s var(--ease);
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9);
+      transform: scale(0.96) translateY(8px);
+      transition: transform 0.25s var(--ease);
+      overflow: hidden;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-backdrop.open .modal-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-full);
+      display: grid;
+      place-items: center;
+      transition: all 0.15s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text-main);
+    }
+
+    .form-control {
+      width: 100%;
+      background: #090b10;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.65rem 0.9rem;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background: rgba(9, 11, 16, 0.6);
+    }
+
+    /* Job Details Modal Pass / Ticket */
+    .receipt-pass {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(99, 102, 241, 0.06));
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .pass-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pass-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #38bdf8;
+      background: var(--cyan-subtle);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .pass-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .pass-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      padding-top: 0.85rem;
+      border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    }
+
+    .pass-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .pass-label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .pass-val {
+      font-size: 0.88rem;
+      color: var(--text-main);
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+
+    /* Mini Terminal Log View inside modal */
+    .terminal-box {
+      background: #020408;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: #94a3b8;
+      line-height: 1.6;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    .terminal-box .log-ts {
+      color: var(--text-dim);
+    }
+
+    .terminal-box .log-info {
+      color: #38bdf8;
+    }
+
+    .terminal-box .log-ok {
+      color: #34d399;
+    }
+
+    /* Toast Notifications */
+    .toast-tray {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .toast-item {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-medium);
+      padding: 0.75rem 1.15rem;
+      border-radius: var(--radius-full);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+      font-size: 0.82rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      animation: toastIn 0.3s var(--ease) forwards;
+      pointer-events: auto;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header>
+      <div class="brand-wrap">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="2"/>
+            <rect x="9" y="9" width="6" height="6"/>
+            <path d="M15 2v2"/>
+            <path d="M15 20v2"/>
+            <path d="M2 15h2"/>
+            <path d="M2 9h2"/>
+            <path d="M20 15h2"/>
+            <path d="M20 9h2"/>
+            <path d="M9 2v2"/>
+            <path d="M9 20v2"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">
+            TaskFlow
+            <span class="badge-tag">Compute Engine</span>
+          </div>
+          <p class="brand-desc">Background Job Processing & Worker Engine (EC2 Demo)</p>
+        </div>
+      </div>
+
+      <div class="header-status-bar">
+        <div class="status-chip">
+          <span class="status-dot"></span>
+          <span>Worker Pool: Online</span>
+        </div>
+        <button class="btn btn-secondary" onclick="triggerBenchmarkDemo()" title="Submit high-load benchmark demo jobs">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          ⚡ Benchmark Demo
+        </button>
+        <button class="btn btn-primary" onclick="toggleSubmitModal(true)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Submit Job
+        </button>
+      </div>
+    </header>
+
+    <!-- Compute Vitals HUD -->
+    <section class="vitals-grid">
+      <!-- CPU Load -->
+      <div class="vital-card">
+        <div class="vital-header">
+          <span>CPU Compute Load</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 20V10"/>
+            <path d="M12 20V4"/>
+            <path d="M6 20v-6"/>
+          </svg>
+        </div>
+        <div class="vital-value-row">
+          <span class="vital-value" id="valCpuLoad">18</span>
+          <span class="vital-unit">%</span>
+        </div>
+        <div class="vital-meter">
+          <div class="vital-meter-fill" id="meterCpuLoad" style="width: 18%;"></div>
+        </div>
+        <div class="vital-footer">
+          <span>2 vCPU Cores</span>
+          <span id="txtCpuStatus">Idle / Nominal</span>
+        </div>
+      </div>
+
+      <!-- RAM Memory -->
+      <div class="vital-card">
+        <div class="vital-header">
+          <span>Memory (RAM)</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+            <line x1="6" y1="6" x2="6.01" y2="6"/>
+            <line x1="6" y1="18" x2="6.01" y2="18"/>
+          </svg>
+        </div>
+        <div class="vital-value-row">
+          <span class="vital-value" id="valRamUsed">1.12</span>
+          <span class="vital-unit">/ 2.00 GB</span>
+        </div>
+        <div class="vital-meter">
+          <div class="vital-meter-fill" id="meterRam" style="width: 56%;"></div>
+        </div>
+        <div class="vital-footer">
+          <span id="txtRamPercent">56% Allocated</span>
+          <span>Swap: 0 MB</span>
+        </div>
+      </div>
+
+      <!-- Active Workers -->
+      <div class="vital-card">
+        <div class="vital-header">
+          <span>Active Worker Pool</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+            <polyline points="2 17 12 22 22 17"/>
+            <polyline points="2 12 12 17 22 12"/>
+          </svg>
+        </div>
+        <div class="vital-value-row">
+          <span class="vital-value" id="valActiveWorkers">1</span>
+          <span class="vital-unit">/ 4 Threads</span>
+        </div>
+        <div class="vital-meter">
+          <div class="vital-meter-fill" id="meterWorkers" style="width: 25%;"></div>
+        </div>
+        <div class="vital-footer">
+          <span id="txtWorkerCapacity">Concurrency: 25%</span>
+          <span>Node.js v20 LTS</span>
+        </div>
+      </div>
+
+      <!-- Server Uptime & Throughput -->
+      <div class="vital-card">
+        <div class="vital-header">
+          <span>Throughput / Finished</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="vital-value-row">
+          <span class="vital-value" id="valFinishedCount">48</span>
+          <span class="vital-unit">Jobs</span>
+        </div>
+        <div class="vital-meter">
+          <div class="vital-meter-fill" style="width: 100%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+        </div>
+        <div class="vital-footer">
+          <span>Avg: ~1.8s / job</span>
+          <span id="valServerUptime">Uptime: 14d 6h</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Queue & Job Board Header -->
+    <div class="board-header">
+      <div class="tabs-wrap" id="filterTabs">
+        <button class="tab-btn active" onclick="setJobFilter('all', this)">
+          All Jobs <span class="tab-count" id="countAll">0</span>
+        </button>
+        <button class="tab-btn" onclick="setJobFilter('processing', this)">
+          Processing <span class="tab-count" id="countProcessing">0</span>
+        </button>
+        <button class="tab-btn" onclick="setJobFilter('queued', this)">
+          Queued <span class="tab-count" id="countQueued">0</span>
+        </button>
+        <button class="tab-btn" onclick="setJobFilter('completed', this)">
+          Completed <span class="tab-count" id="countCompleted">0</span>
+        </button>
+      </div>
+
+      <div class="board-actions">
+        <button class="btn btn-secondary" onclick="toggleEnginePause()" id="btnEnginePause">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="6" y="4" width="4" height="16"/>
+            <rect x="14" y="4" width="4" height="16"/>
+          </svg>
+          <span id="txtEnginePause">Pause Engine</span>
+        </button>
+        <button class="btn btn-ghost" onclick="clearCompletedJobs()" title="Clear completed jobs">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          Clear Done
+        </button>
+      </div>
+    </div>
+
+    <!-- Jobs Stream List -->
+    <div class="jobs-container" id="jobsList">
+      <!-- Rendered dynamically -->
+    </div>
+  </div>
+
+  <!-- Modal: Submit New Job -->
+  <div class="modal-backdrop" id="submitModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          Submit Compute Task
+        </h3>
+        <button class="modal-close" onclick="toggleSubmitModal(false)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <form id="submitJobForm" onsubmit="handleJobSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Task Type</label>
+            <select id="fJobType" class="form-control" onchange="onJobTypePresetChange()">
+              <option value="pdf">Financial Statement PDF Generation</option>
+              <option value="image">Batch Image Resizing & WebP Conversion</option>
+              <option value="etl">Data Warehouse ETL & Aggregation</option>
+              <option value="zip">Compress Archive Backup (.tar.gz)</option>
+              <option value="email">Bulk Transactional Invoice Dispatch</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Task Title / Identifier</label>
+            <input type="text" id="fJobTitle" class="form-control" required placeholder="e.g. Q4 Financial Audit Report">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Execution Priority</label>
+              <select id="fJobPriority" class="form-control">
+                <option value="normal">Normal Priority</option>
+                <option value="high">High (Urgent)</option>
+                <option value="low">Low Priority</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Payload Complexity</label>
+              <select id="fJobPayload" class="form-control">
+                <option value="standard">Standard (~1.5s)</option>
+                <option value="heavy">Heavy Compute (~3.2s)</option>
+                <option value="light">Lightweight (~0.8s)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="toggleSubmitModal(false)">Batal</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitJob">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            Dispatch ke Queue
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Job Details & Audit Log -->
+  <div class="modal-backdrop" id="detailModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          Task Execution Details
+        </h3>
+        <button class="modal-close" onclick="toggleDetailModal(false)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-pass">
+          <div class="pass-header">
+            <span class="pass-tag" id="passStatusTag">● COMPLETED</span>
+            <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--cyan);" id="passJobId">#JOB-10492</span>
+          </div>
+          <div>
+            <div class="pass-title" id="passJobTitle">Job Title</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem;" id="passJobMeta">Priority • Payload</div>
+          </div>
+          <div class="pass-details-grid">
+            <div class="pass-item">
+              <span class="pass-label">Worker Thread</span>
+              <strong class="pass-val" id="passWorkerThread">Thread #1 (PID 4821)</strong>
+            </div>
+            <div class="pass-item">
+              <span class="pass-label">Duration</span>
+              <strong class="pass-val" id="passDuration">1,842 ms</strong>
+            </div>
+            <div class="pass-item">
+              <span class="pass-label">Memory Allocated</span>
+              <strong class="pass-val" id="passMemory">64.2 MB</strong>
+            </div>
+            <div class="pass-item">
+              <span class="pass-label">Return Status</span>
+              <strong class="pass-val" style="color: #34d399;" id="passExitCode">EXIT_OK (0)</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-dim); margin-bottom: 0.4rem; text-transform: uppercase;">
+          Server Execution Logs:
+        </div>
+        <div class="terminal-box" id="terminalLogs">
+          <!-- Dynamic Logs -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="toggleDetailModal(false)">
+          Tutup Detail
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Tray -->
+  <div class="toast-tray" id="toastTray"></div>
+
+  <script>
+    // State
+    const MAX_WORKERS = 4;
+    let enginePaused = false;
+    let currentFilter = 'all';
+
+    const INITIAL_JOBS = [
+      {
+        id: "JOB-48201",
+        title: "Monthly Financial Audit PDF Generation",
+        type: "pdf",
+        priority: "high",
+        payload: "heavy",
+        status: "processing", // queued, processing, completed
+        progress: 68,
+        workerId: 1,
+        startedAt: Date.now() - 1400,
+        duration: 3200,
+        memoryUsed: "84.5 MB"
+      },
+      {
+        id: "JOB-48202",
+        title: "Catalog Images Batch Optimizer (WebP 85%)",
+        type: "image",
+        priority: "normal",
+        payload: "standard",
+        status: "queued",
+        progress: 0,
+        workerId: null,
+        startedAt: null,
+        duration: 1800,
+        memoryUsed: "48.2 MB"
+      },
+      {
+        id: "JOB-48203",
+        title: "Daily Warehouse Sales ETL Aggregation",
+        type: "etl",
+        priority: "normal",
+        payload: "standard",
+        status: "completed",
+        progress: 100,
+        workerId: 2,
+        startedAt: Date.now() - 8500,
+        completedAt: Date.now() - 6700,
+        duration: 1824,
+        memoryUsed: "62.1 MB"
+      },
+      {
+        id: "JOB-48204",
+        title: "Compress System Log Archive (.tar.gz)",
+        type: "zip",
+        priority: "low",
+        payload: "light",
+        status: "completed",
+        progress: 100,
+        workerId: 3,
+        startedAt: Date.now() - 16200,
+        completedAt: Date.now() - 15300,
+        duration: 890,
+        memoryUsed: "32.0 MB"
+      }
+    ];
+
+    let jobs = JSON.parse(localStorage.getItem('taskflow_jobs_v1')) || INITIAL_JOBS;
+    let totalCompletedEver = parseInt(localStorage.getItem('taskflow_completed_count') || "48", 10);
+
+    const JOB_ICONS = {
+      pdf: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+      image: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+      etl: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+      zip: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>`,
+      email: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`
+    };
+
+    // Render & Engine Tick
+    function render() {
+      renderVitals();
+      renderTabs();
+      renderJobs();
+    }
+
+    function renderVitals() {
+      const activeWorkers = jobs.filter(j => j.status === 'processing').length;
+      
+      // Dynamic CPU: Baseline 12% + ~18% per worker + subtle jitter
+      let cpuPercent = Math.min(96, Math.max(8, Math.round(12 + activeWorkers * 19 + (Math.random() * 4 - 2))));
+      if (enginePaused) cpuPercent = 6;
+
+      document.getElementById('valCpuLoad').textContent = cpuPercent;
+      const meterCpu = document.getElementById('meterCpuLoad');
+      meterCpu.style.width = `${cpuPercent}%`;
+      meterCpu.className = 'vital-meter-fill' + (cpuPercent > 75 ? ' danger' : (cpuPercent > 50 ? ' warn' : ''));
+
+      document.getElementById('txtCpuStatus').textContent = cpuPercent > 75 ? 'High Load (Busy)' : (activeWorkers > 0 ? 'Active Compute' : 'Idle / Standby');
+
+      // RAM: Base 1.05 GB + 0.12 GB per active worker
+      const ramUsed = (1.05 + activeWorkers * 0.14).toFixed(2);
+      const ramPct = Math.round((ramUsed / 2.0) * 100);
+      document.getElementById('valRamUsed').textContent = ramUsed;
+      document.getElementById('meterRam').style.width = `${ramPct}%`;
+      document.getElementById('txtRamPercent').textContent = `${ramPct}% Allocated`;
+
+      // Workers
+      document.getElementById('valActiveWorkers').textContent = activeWorkers;
+      const workerPct = Math.round((activeWorkers / MAX_WORKERS) * 100);
+      document.getElementById('meterWorkers').style.width = `${workerPct}%`;
+      document.getElementById('txtWorkerCapacity').textContent = `Concurrency: ${workerPct}%`;
+
+      // Finished
+      document.getElementById('valFinishedCount').textContent = totalCompletedEver;
+    }
+
+    function renderTabs() {
+      const all = jobs.length;
+      const processing = jobs.filter(j => j.status === 'processing').length;
+      const queued = jobs.filter(j => j.status === 'queued').length;
+      const completed = jobs.filter(j => j.status === 'completed').length;
+
+      document.getElementById('countAll').textContent = all;
+      document.getElementById('countProcessing').textContent = processing;
+      document.getElementById('countQueued').textContent = queued;
+      document.getElementById('countCompleted').textContent = completed;
+    }
+
+    function renderJobs() {
+      const container = document.getElementById('jobsList');
+      const filtered = jobs.filter(j => {
+        if (currentFilter === 'all') return true;
+        return j.status === currentFilter;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+            <h3>Tidak Ada Tugas di Tab Ini</h3>
+            <p>Klik tombol <strong>"Submit Job"</strong> atau <strong>"⚡ Benchmark Demo"</strong> untuk menjadwalkan tugas komputasi baru.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(j => {
+        const iconSvg = JOB_ICONS[j.type] || JOB_ICONS.pdf;
+        const priorityClass = `priority-${j.priority}`;
+
+        let statusPillHtml = '';
+        let progressHtml = '';
+
+        if (j.status === 'processing') {
+          statusPillHtml = `
+            <span class="job-status-pill pill-processing">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="spinner">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+              </svg>
+              Thread #${j.workerId} (${j.progress}%)
+            </span>
+          `;
+          progressHtml = `
+            <div class="job-progress-wrap">
+              <div class="job-progress-meta">
+                <span>Computing payload...</span>
+                <span>${j.progress}%</span>
+              </div>
+              <div class="job-progress-track">
+                <div class="job-progress-bar" style="width: ${j.progress}%;"></div>
+              </div>
+            </div>
+          `;
+        } else if (j.status === 'completed') {
+          statusPillHtml = `
+            <span class="job-status-pill pill-completed">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Selesai (${j.duration}ms)
+            </span>
+          `;
+        } else {
+          statusPillHtml = `
+            <span class="job-status-pill pill-queued">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Dalam Antrean
+            </span>
+          `;
+        }
+
+        return `
+          <div class="job-card ${j.status}">
+            <div class="job-icon-wrap">
+              ${iconSvg}
+            </div>
+
+            <div class="job-main-info">
+              <div class="job-meta-line">
+                <span class="job-id-badge">#${j.id}</span>
+                <span class="priority-badge ${priorityClass}">${j.priority}</span>
+                <span style="font-size: 0.72rem; color: var(--text-dim); font-family: var(--font-mono);">${j.type.toUpperCase()} COMPUTE</span>
+              </div>
+
+              <div class="job-title" title="${escapeHtml(j.title)}">${escapeHtml(j.title)}</div>
+
+              <div class="job-subtext">
+                <span>Payload: <strong>${j.payload.toUpperCase()}</strong></span>
+                &bull;
+                <span>Mem: <strong>${j.memoryUsed}</strong></span>
+                ${j.workerId ? `&bull; <span>Worker: <strong>Thread-${j.workerId}</strong></span>` : ''}
+              </div>
+
+              ${progressHtml}
+            </div>
+
+            <div class="job-actions-col">
+              ${statusPillHtml}
+              <button class="btn-action-icon" onclick="openJobDetails('${j.id}')" title="Lihat Detail & Log">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+              <button class="btn-action-icon danger" onclick="deleteJob('${j.id}')" title="Hapus Job">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Engine Background Simulation Loop
+    setInterval(() => {
+      if (enginePaused) return;
+
+      let changed = false;
+
+      // 1. Assign workers to queued jobs
+      const activeWorkersCount = jobs.filter(j => j.status === 'processing').length;
+      if (activeWorkersCount < MAX_WORKERS) {
+        const availableWorkers = [1, 2, 3, 4].filter(w => !jobs.some(j => j.status === 'processing' && j.workerId === w));
+        
+        // Find next queued job (high priority first)
+        const queuedJobs = jobs.filter(j => j.status === 'queued')
+          .sort((a, b) => {
+            const pOrder = { high: 0, normal: 1, low: 2 };
+            return pOrder[a.priority] - pOrder[b.priority];
+          });
+
+        if (queuedJobs.length > 0 && availableWorkers.length > 0) {
+          const jobToRun = queuedJobs[0];
+          jobToRun.status = 'processing';
+          jobToRun.workerId = availableWorkers[0];
+          jobToRun.startedAt = Date.now();
+          jobToRun.progress = 5;
+          changed = true;
+        }
+      }
+
+      // 2. Advance processing jobs
+      jobs.forEach(j => {
+        if (j.status === 'processing') {
+          // Increment progress based on payload duration
+          const increment = Math.round((500 / j.duration) * 100);
+          j.progress = Math.min(100, j.progress + increment);
+
+          if (j.progress >= 100) {
+            j.status = 'completed';
+            j.completedAt = Date.now();
+            j.workerId = null;
+            totalCompletedEver++;
+            saveState();
+            showToast(`✓ Task #${j.id} selesai diproses!`);
+          }
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        saveState();
+        render();
+      } else {
+        renderVitals(); // Keep CPU jitter alive
+      }
+    }, 450);
+
+    // Tab Filters
+    function setJobFilter(filter, el) {
+      currentFilter = filter;
+      document.querySelectorAll('#filterTabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+      if (el) el.classList.add('active');
+      renderJobs();
+    }
+
+    // Engine Controls
+    function toggleEnginePause() {
+      enginePaused = !enginePaused;
+      const btn = document.getElementById('btnEnginePause');
+      const txt = document.getElementById('txtEnginePause');
+
+      if (enginePaused) {
+        btn.classList.add('btn-primary');
+        btn.classList.remove('btn-secondary');
+        txt.textContent = 'Resume Engine';
+        showToast("⏸ Worker Engine di-pause");
+      } else {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-secondary');
+        txt.textContent = 'Pause Engine';
+        showToast("▶ Worker Engine resumed");
+      }
+      render();
+    }
+
+    function clearCompletedJobs() {
+      const initialLen = jobs.length;
+      jobs = jobs.filter(j => j.status !== 'completed');
+      saveState();
+      render();
+      const removed = initialLen - jobs.length;
+      showToast(`${removed} completed tasks dibersihkan`);
+    }
+
+    function deleteJob(id) {
+      jobs = jobs.filter(j => j.id !== id);
+      saveState();
+      render();
+      showToast(`Task #${id} dihapus`);
+    }
+
+    // Modals
+    function toggleSubmitModal(show) {
+      const el = document.getElementById('submitModal');
+      el.classList.toggle('open', show);
+      if (show) {
+        onJobTypePresetChange();
+        document.getElementById('fJobTitle').focus();
+      }
+    }
+
+    function onJobTypePresetChange() {
+      const type = document.getElementById('fJobType').value;
+      const titleInput = document.getElementById('fJobTitle');
+      const titles = {
+        pdf: "Monthly Financial Audit Report (PDF/A)",
+        image: "E-Commerce Product Images Resizing",
+        etl: "Data Warehouse Transactions Pipeline ETL",
+        zip: "Full Backup Tarball Compression (.tar.gz)",
+        email: "Bulk Monthly Invoices Customer Dispatch"
+      };
+      titleInput.value = titles[type] || "Background Task Job";
+    }
+
+    function handleJobSubmit(e) {
+      e.preventDefault();
+      const type = document.getElementById('fJobType').value;
+      const title = document.getElementById('fJobTitle').value.trim();
+      const priority = document.getElementById('fJobPriority').value;
+      const payload = document.getElementById('fJobPayload').value;
+
+      const durations = { light: 1100, standard: 2200, heavy: 3800 };
+      const memories = { light: "28.4 MB", standard: "54.2 MB", heavy: "92.0 MB" };
+
+      const newJob = {
+        id: "JOB-" + Math.floor(10000 + Math.random() * 90000),
+        title,
+        type,
+        priority,
+        payload,
+        status: "queued",
+        progress: 0,
+        workerId: null,
+        startedAt: null,
+        duration: durations[payload] || 2000,
+        memoryUsed: memories[payload] || "48.0 MB"
+      };
+
+      jobs.unshift(newJob);
+      saveState();
+      toggleSubmitModal(false);
+      render();
+      showToast(`Task #${newJob.id} berhasil dijadwalkan ke queue!`);
+    }
+
+    // Benchmark Demo Trigger
+    function triggerBenchmarkDemo() {
+      const demoTasks = [
+        { title: "Parallel ETL Pipeline Batch #104", type: "etl", priority: "high", payload: "heavy", duration: 3200, memoryUsed: "96.4 MB" },
+        { title: "High-Resolution Image Compression WebP", type: "image", priority: "high", payload: "standard", duration: 2400, memoryUsed: "68.2 MB" },
+        { title: "Consolidated Revenue Statement PDF", type: "pdf", priority: "normal", payload: "standard", duration: 2100, memoryUsed: "54.0 MB" }
+      ];
+
+      demoTasks.forEach((dt, idx) => {
+        setTimeout(() => {
+          const j = {
+            id: "BENCH-" + Math.floor(1000 + Math.random() * 9000),
+            title: dt.title,
+            type: dt.type,
+            priority: dt.priority,
+            payload: dt.payload,
+            status: "queued",
+            progress: 0,
+            workerId: null,
+            startedAt: null,
+            duration: dt.duration,
+            memoryUsed: dt.memoryUsed
+          };
+          jobs.unshift(j);
+          saveState();
+          render();
+        }, idx * 150);
+      });
+
+      showToast("⚡ 3 Benchmark Jobs dispatched! CPU workload meningkat.");
+    }
+
+    // Details Modal
+    function openJobDetails(id) {
+      const j = jobs.find(x => x.id === id);
+      if (!j) return;
+
+      document.getElementById('passJobId').textContent = `#${j.id}`;
+      document.getElementById('passJobTitle').textContent = j.title;
+      document.getElementById('passJobMeta').textContent = `Priority: ${j.priority.toUpperCase()} • Payload: ${j.payload.toUpperCase()} • ${j.type.toUpperCase()}`;
+      
+      const tag = document.getElementById('passStatusTag');
+      tag.textContent = `● ${j.status.toUpperCase()}`;
+      tag.style.color = j.status === 'completed' ? '#34d399' : (j.status === 'processing' ? '#38bdf8' : '#fbbf24');
+
+      document.getElementById('passWorkerThread').textContent = j.workerId ? `Thread #${j.workerId} (PID ${3400 + j.workerId * 12})` : 'Queue Pool (Awaiting Worker)';
+      document.getElementById('passDuration').textContent = `${j.duration} ms`;
+      document.getElementById('passMemory').textContent = j.memoryUsed;
+      document.getElementById('passExitCode').textContent = j.status === 'completed' ? 'EXIT_OK (0)' : (j.status === 'processing' ? 'RUNNING (IN_PROGRESS)' : 'QUEUED (PENDING)');
+
+      // Generate realistic log output
+      const now = new Date();
+      const logs = [
+        `[${now.toISOString()}] [INFO]  Dispatcher allocated Task ID #${j.id}`,
+        `[${now.toISOString()}] [DEBUG] Node.js Worker Thread spawned (V8 heap allocated: ${j.memoryUsed})`,
+        `[${now.toISOString()}] [INFO]  Executing ${j.type.toUpperCase()} compute pipeline with priority: ${j.priority}`,
+        j.status === 'completed' 
+          ? `[${now.toISOString()}] [OK]    Task successfully finished in ${j.duration}ms. Memory flushed.`
+          : `[${now.toISOString()}] [DEBUG] Task computation in progress (${j.progress}% completed).`
+      ];
+
+      document.getElementById('terminalLogs').innerHTML = logs.map(l => {
+        if (l.includes('[OK]')) return `<div class="log-ok">${escapeHtml(l)}</div>`;
+        if (l.includes('[INFO]')) return `<div class="log-info">${escapeHtml(l)}</div>`;
+        return `<div class="log-ts">${escapeHtml(l)}</div>`;
+      }).join('');
+
+      toggleDetailModal(true);
+    }
+
+    function toggleDetailModal(show) {
+      document.getElementById('detailModal').classList.toggle('open', show);
+    }
+
+    // Toasts
+    function showToast(msg) {
+      const tray = document.getElementById('toastTray');
+      const item = document.createElement('div');
+      item.className = 'toast-item';
+      item.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>${escapeHtml(msg)}</span>
+      `;
+      tray.appendChild(item);
+      setTimeout(() => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(8px)';
+        item.style.transition = 'all 0.25s var(--ease)';
+        setTimeout(() => item.remove(), 250);
+      }, 3500);
+    }
+
+    function saveState() {
+      localStorage.setItem('taskflow_jobs_v1', JSON.stringify(jobs));
+      localStorage.setItem('taskflow_completed_count', totalCompletedEver.toString());
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Keyboard & Backdrop
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        toggleSubmitModal(false);
+        toggleDetailModal(false);
+      }
+    });
+
+    document.querySelectorAll('.modal-backdrop').forEach(m => {
+      m.addEventListener('click', (e) => {
+        if (e.target === m) {
+          toggleSubmitModal(false);
+          toggleDetailModal(false);
+        }
+      });
+    });
+
+    // Start
+    render();
+  </script>
+</body>
+</html>
