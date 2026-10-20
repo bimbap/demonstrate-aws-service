@@ -56,11 +56,27 @@ git checkout ec2
 
 ---
 
-## 🛠️ Pushing Service Sub-Folders to Their Dedicated Branches
+## 🛠️ Workflow for Adding New Services (Service-as-a-Branch)
 
-If you are developing locally from the monorepo workspace and pushing each service folder to its own remote branch:
+> [!IMPORTANT]
+> **Strict Isolation Rule on `main` Branch**:
+> The `main` branch serves **strictly as the documentation and navigation hub**. It must NEVER track or contain service implementation files.
+> **Whenever a new service is added, its folder MUST immediately be appended to `.gitignore` on the `main` branch before any files are created or staged.**
 
-### Pushing S3 Material:
+### Step 1: Register Service in `.gitignore` on `main`
+```bash
+# On branch main:
+echo "<new-service>/" >> .gitignore
+git add .gitignore README.md
+git commit -m "chore(main): ignore <new-service> and update service catalog"
+git push origin main
+```
+
+---
+
+### Step 2: Push Service Code to Dedicated Branch
+
+#### Pushing S3 Material:
 ```bash
 cd s3
 git init
@@ -71,7 +87,7 @@ git commit -m "feat(s3): add Pustaka digital book archive demonstration"
 git push -u origin s3 --force
 ```
 
-### Pushing EC2 Material:
+#### Pushing EC2 Material:
 ```bash
 cd ec2
 git init
@@ -82,13 +98,15 @@ git commit -m "feat(ec2): add TaskFlow compute engine and Nginx user-data bootst
 git push -u origin ec2 --force
 ```
 
-### Updating Main Documentation Branch:
+#### Pushing EFS Material:
 ```bash
-# From demonstrates-material root:
-git checkout -B main
-git add README.md
-git commit -m "docs: add central AWS demonstration catalog and branch guide"
-git push -u origin main
+cd efs
+git init
+git remote add origin https://github.com/bimbap/demonstrate-aws-service.git
+git checkout -B efs
+git add .
+git commit -m "feat(efs): add Amazon EFS hands-on tutorial and EC2 bootstrap script"
+git push -u origin efs --force
 ```
 
 ---
