@@ -14,17 +14,19 @@ Instead of maintaining separate repositories for each AWS service, this reposito
 demonstrate-aws-service/
 ├── main          <- Documentation Hub & Demonstration Index (This branch)
 ├── s3            <- Pustaka: Digital Book Archive & S3 Static Website Hosting
-└── ec2           <- TaskFlow: Background Compute Engine & Nginx UserData Bootstrap
+├── ec2           <- TaskFlow: Background Compute Engine & Nginx UserData Bootstrap
+└── efs           <- Shared-NFS: Cross-AZ Shared Storage & Multi-Node Cluster
 ```
 
 ---
 
 ## 📦 Service Catalog
 
-| Branch | Service | Application | Key Concepts Demonstrated | Core Tech |
+| Branch | Service | Application / Topic | Key Concepts Demonstrated | Core Tech |
 |---|---|---|---|---|
 | [`s3`](https://github.com/bimbap/demonstrate-aws-service/tree/s3) | **Amazon S3** | **Pustaka — Digital Book Archive** | Static Website Hosting, Bucket Policies, Object CRUD, Client-Side Loan Tickets, CloudFront OAC. | HTML5, Vanilla CSS, JS (Zero Build) |
 | [`ec2`](https://github.com/bimbap/demonstrate-aws-service/tree/ec2) | **Amazon EC2** | **TaskFlow — Compute Engine** | Ubuntu 22.04/24.04 LTS UserData Bootstrap, Nginx Web Server, CPU/RAM Workload Dynamics, Worker Concurrency. | Bash UserData, Nginx, Vanilla JS |
+| [`efs`](https://github.com/bimbap/demonstrate-aws-service/tree/efs) | **Amazon EFS** | **Shared Storage & Multi-AZ Cluster** | Multi-AZ Mount Targets, NFSv4 / `amazon-efs-utils`, Persistent `/etc/fstab`, Access Points, Port 2049 SG. | NFSv4, Bash Bootstrap, Linux POSIX |
 
 ---
 
