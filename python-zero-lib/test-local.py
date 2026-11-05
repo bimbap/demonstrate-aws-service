@@ -43,3 +43,4 @@ if res1["statusCode"] == 200 and res3["statusCode"] == 400:
 else:
     print("\n[FAILURE] Unexpected status code returned.")
     sys.exit(1)
+

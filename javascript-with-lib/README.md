@@ -59,3 +59,4 @@ Run the test suite directly with Node.js 24:
 node test-local.js
 ```
 Expected output: Returns HTTP 200 with Cold Start `true` on invocation 1, Cold Start `false` on invocation 2, and HTTP 400 on error event.
+

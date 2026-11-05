@@ -2,3 +2,4 @@
   "simulateError": true,
   "errorReason": "Simulated Node.js exception to verify CloudWatch error log streaming"
 }
+

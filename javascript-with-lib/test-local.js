@@ -37,3 +37,4 @@ if (res1.statusCode === 200 && res3.statusCode === 400) {
   console.error("\n[FAILURE] Unexpected status code returned.");
   process.exit(1);
 }
+

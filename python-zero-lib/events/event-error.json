@@ -2,3 +2,4 @@
   "simulateError": true,
   "errorReason": "Simulated Python standard library exception to verify CloudWatch error streaming"
 }
+
