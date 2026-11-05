@@ -15,18 +15,26 @@ demonstrate-aws-service/
 ├── main          <- Documentation Hub & Demonstration Index (This branch)
 ├── s3            <- Pustaka: Digital Book Archive & S3 Static Website Hosting
 ├── ec2           <- TaskFlow: Background Compute Engine & Nginx UserData Bootstrap
-└── efs           <- Shared-NFS: Cross-AZ Shared Storage & Multi-Node Cluster
+├── efs           <- Shared-NFS: Cross-AZ Shared Storage & Multi-Node Cluster
+├── lambda        <- Serverless Compute, Cold Starts & Embedded Metric Format (EMF)
+├── cloudwatch    <- Logs Insights, Custom Metric Filters, Alarms & Operations Dashboard
+├── api-gateway   <- Architecture, OpenAPI 3.0 Mock Integrations & Preflight CORS
+└── amplify       <- Global Web Hosting, Managed SSL, SPA Rewrites & CI/CD Pipeline
 ```
 
 ---
 
 ## 📦 Service Catalog
 
-| Branch | Service | Application / Topic | Key Concepts Demonstrated | Core Tech |
+| Branch / Folder | Service | Application / Topic | Key Concepts Demonstrated | Core Tech |
 |---|---|---|---|---|
 | [`s3`](https://github.com/bimbap/demonstrate-aws-service/tree/s3) | **Amazon S3** | **Pustaka — Digital Book Archive** | Static Website Hosting, Bucket Policies, Object CRUD, Client-Side Loan Tickets, CloudFront OAC. | HTML5, Vanilla CSS, JS (Zero Build) |
 | [`ec2`](https://github.com/bimbap/demonstrate-aws-service/tree/ec2) | **Amazon EC2** | **TaskFlow — Compute Engine** | Ubuntu 22.04/24.04 LTS UserData Bootstrap, Nginx Web Server, CPU/RAM Workload Dynamics, Worker Concurrency. | Bash UserData, Nginx, Vanilla JS |
 | [`efs`](https://github.com/bimbap/demonstrate-aws-service/tree/efs) | **Amazon EFS** | **Shared Storage & Multi-AZ Cluster** | Multi-AZ Mount Targets, NFSv4 / `amazon-efs-utils`, Persistent `/etc/fstab`, Access Points, Port 2049 SG. | NFSv4, Bash Bootstrap, Linux POSIX |
+| [`lambda`](lambda/) | **AWS Lambda** | **Serverless Logger & EMF** | Cold Start detection, Context extraction, Structured JSON logs, CloudWatch EMF custom metrics, Error simulation. | Node.js 20 ESM, JSON Logging |
+| [`cloudwatch`](cloudwatch/) | **Amazon CloudWatch** | **Logs, Metrics & Alarms** | Log Groups/Streams, Metric Filters, CloudWatch Alarms (SNS alerts), CloudWatch Logs Insights queries, Monitoring Dashboards. | CloudWatch JSON, SQL Queries |
+| [`api-gateway`](api-gateway/) | **Amazon API Gateway** | **Mock APIs & CORS** | HTTP API vs REST API, OpenAPI 3.0 Mock Integrations (zero backend), Preflight CORS handling, Stage deployments. | OpenAPI 3.0, VTL Context, REST |
+| [`amplify`](amplify/) | **AWS Amplify** | **Amplify Hosting & SPA** | Global CloudFront CDN edge delivery, Auto SSL (ACM), Atomic Git CI/CD, SPA 200 Rewrite Rules, Environment variables. | HTML5, CSS3, Vanilla JS, amplify.yml |
 
 ---
 
