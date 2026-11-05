@@ -3,132 +3,390 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AWS Amplify Hosting — Interactive Demonstration</title>
+  <title>EventPass — Tech Summit & Digital Badge Portal (AWS Amplify)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app-container">
-    <header class="navbar">
-      <div class="brand">
-        <span class="logo-badge">AWS</span>
-        <h1>Amplify Hosting Demo</h1>
-      </div>
-      <div class="env-pill">
-        <span class="status-dot"></span>
-        <span id="env-badge">Production (CloudFront Edge)</span>
+  <div class="app-layout">
+    <!-- Top Navigation Bar -->
+    <header class="top-nav">
+      <div class="nav-container">
+        <a href="#/explore" class="brand-logo">
+          <div class="brand-badge">AWS</div>
+          <div class="brand-text">
+            <span class="brand-title">EventPass</span>
+            <span class="brand-sub">Cloud Summit 2026</span>
+          </div>
+        </a>
+
+        <!-- SPA Navigation Tabs -->
+        <nav class="nav-links">
+          <a href="#/explore" class="nav-item active" data-view="explore">
+            <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+            </svg>
+            <span>Sessions</span>
+          </a>
+          <a href="#/speakers" class="nav-item" data-view="speakers">
+            <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+            </svg>
+            <span>Speakers</span>
+          </a>
+          <a href="#/tickets" class="nav-item" data-view="tickets">
+            <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2 1 1 0 100 2 2 2 0 00-2 2v2a2 2 0 002 2h12a2 2 0 002-2v-2a2 2 0 00-2-2 1 1 0 100-2 2 2 0 002-2V6a2 2 0 00-2-2H4zm10 5a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1z" clip-rule="evenodd"/>
+            </svg>
+            <span>Tickets</span>
+          </a>
+          <a href="#/my-pass" class="nav-item" data-view="my-pass">
+            <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>My Pass</span>
+            <span class="badge-count" id="pass-count-badge">0</span>
+          </a>
+        </nav>
+
+        <!-- Amplify Live Edge Status -->
+        <div class="edge-telemetry">
+          <span class="pulse-indicator"></span>
+          <div class="edge-text">
+            <span class="edge-label">Amplify Edge</span>
+            <span class="edge-ping" id="edge-latency-ping">CloudFront • 12ms</span>
+          </div>
+        </div>
       </div>
     </header>
 
-    <main class="dashboard">
-      <section class="hero-card">
-        <h2>Global Web Hosting & CI/CD Pipeline</h2>
-        <p>Demonstrating AWS Amplify managed hosting, atomic git deployments, edge caching, and client-side single page app (SPA) routing.</p>
-        <div class="metrics-strip">
-          <div class="metric-box">
-            <span class="label">Deployment Model</span>
-            <span class="val highlight">Serverless Managed</span>
+    <!-- Main Dynamic Container -->
+    <main class="main-content">
+      <!-- HERO BANNER -->
+      <section class="summit-hero">
+        <div class="hero-content">
+          <div class="hero-pill">
+            <span class="sparkle">✦</span>
+            <span>ANNUAL CLOUD COMPUTING SUMMIT 2026</span>
           </div>
-          <div class="metric-box">
-            <span class="label">Distribution</span>
-            <span class="val">CloudFront Global Edge</span>
+          <h1 class="hero-headline">Building the Future on <span class="gradient-text">Serverless & Edge</span></h1>
+          <p class="hero-description">
+            Join 3,500+ cloud engineers, solution architects, and DevOps leaders for 3 days of deep-dive workshops, architecture breakdowns, and live serverless deployments.
+          </p>
+
+          <div class="hero-meta-strip">
+            <div class="meta-item">
+              <span class="meta-icon">📅</span>
+              <div class="meta-val">
+                <strong>Nov 20 - 22, 2026</strong>
+                <small>3 Days Hands-on</small>
+              </div>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">📍</span>
+              <div class="meta-val">
+                <strong>Jakarta Convention Center</strong>
+                <small>& Global Virtual Stream</small>
+              </div>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">⚡</span>
+              <div class="meta-val">
+                <strong id="countdown-timer">14d : 08h : 24m</strong>
+                <small>Opening Keynote Countdown</small>
+              </div>
+            </div>
           </div>
-          <div class="metric-box">
-            <span class="label">SSL/TLS Security</span>
-            <span class="val success">Managed ACM (Auto-Renew)</span>
-          </div>
-          <div class="metric-box">
-            <span class="label">SPA Rewrites</span>
-            <span class="val">200 Status Passthrough</span>
+
+          <div class="hero-actions">
+            <a href="#/tickets" class="btn-primary">
+              <span>Claim Conference Pass</span>
+              <svg class="btn-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </a>
+            <a href="#/explore" class="btn-secondary">Explore 18+ Sessions</a>
           </div>
         </div>
       </section>
 
-      <section class="interactive-panel">
-        <nav class="tab-nav">
-          <button class="tab-btn active" data-tab="routing">1. SPA Client-Side Routing</button>
-          <button class="tab-btn" data-tab="env">2. Environment Variables</button>
-          <button class="tab-btn" data-tab="latency">3. Global Edge Latency</button>
-          <button class="tab-btn" data-tab="specs">4. amplify.yml Spec</button>
-        </nav>
-
-        <div class="tab-content active" id="tab-routing">
-          <h3>Simulating SPA Client-Side Route Handling</h3>
-          <p class="desc">In SPAs (React, Vue, or Vanilla), deep routes like <code>/dashboard</code> or <code>/profile</code> do not physically exist on disk. AWS Amplify uses <strong>Redirects & Rewrites</strong> to transparently serve <code>/index.html</code> with a <code>200 (Rewrite)</code> status code.</p>
-          <div class="route-buttons">
-            <button class="btn-route" onclick="navigateTo('/overview')">Go to /overview</button>
-            <button class="btn-route" onclick="navigateTo('/analytics')">Go to /analytics</button>
-            <button class="btn-route" onclick="navigateTo('/settings')">Go to /settings</button>
+      <!-- VIEW 1: SESSIONS CATALOG -->
+      <section class="spa-view active" id="view-explore">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Featured Sessions & Workshops</h2>
+            <p class="section-subtitle">Curated technical keynotes, architectural patterns, and live labs</p>
           </div>
-          <div class="route-display">
-            <span>Simulated Active Route: </span>
-            <strong id="active-path">/overview</strong>
+          <!-- Search & Filter Controls -->
+          <div class="filter-controls">
+            <div class="search-input-wrapper">
+              <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+              <input type="text" id="session-search" placeholder="Search sessions, topics, or speakers..." autocomplete="off">
+            </div>
           </div>
         </div>
 
-        <div class="tab-content" id="tab-env">
-          <h3>Runtime Environment Configuration</h3>
-          <p class="desc">Amplify allows configuring build-time and runtime environment variables without checking secrets into version control.</p>
-          <div class="env-table-wrapper">
-            <table class="env-table">
-              <thead>
-                <tr>
-                  <th>Variable Key</th>
-                  <th>Resolved Value</th>
-                  <th>Scope</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><code>AMPLIFY_ENV</code></td>
-                  <td><span class="tag">production</span></td>
-                  <td>Global</td>
-                </tr>
-                <tr>
-                  <td><code>AWS_REGION</code></td>
-                  <td><span class="tag">us-east-1 (Global Edge)</span></td>
-                  <td>Hosting</td>
-                </tr>
-                <tr>
-                  <td><code>API_ENDPOINT_URL</code></td>
-                  <td><span class="tag">https://api.example.com/prod</span></td>
-                  <td>Application</td>
-                </tr>
-              </tbody>
-            </table>
+        <!-- Category Tags -->
+        <div class="category-chips" id="category-chips">
+          <button class="chip active" data-category="all">All Sessions (6)</button>
+          <button class="chip" data-category="serverless">Serverless & Edge</button>
+          <button class="chip" data-category="ai">AI & Agentic DevOps</button>
+          <button class="chip" data-category="architecture">Architecture & Data</button>
+          <button class="chip" data-category="security">Security & SRE</button>
+        </div>
+
+        <!-- Session Cards Grid -->
+        <div class="sessions-grid" id="sessions-grid">
+          <!-- Dynamically populated via app.js -->
+        </div>
+      </section>
+
+      <!-- VIEW 2: SPEAKERS LINEUP -->
+      <section class="spa-view" id="view-speakers">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Keynote Speakers & Architects</h2>
+            <p class="section-subtitle">Learn directly from cloud practitioners building web-scale systems</p>
+          </div>
+        </div>
+        <div class="speakers-grid" id="speakers-grid">
+          <!-- Dynamically populated via app.js -->
+        </div>
+      </section>
+
+      <!-- VIEW 3: TICKETS & REGISTRATION -->
+      <section class="spa-view" id="view-tickets">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Choose Your Conference Pass</h2>
+            <p class="section-subtitle">Reserve your entry tier and generate an instant digital attendee badge</p>
           </div>
         </div>
 
-        <div class="tab-content" id="tab-latency">
-          <h3>Edge Latency Ping Simulator</h3>
-          <p class="desc">Measure connection latency to the nearest CloudFront Point of Presence (PoP).</p>
-          <button class="btn-action" id="btn-ping" onclick="runPingTest()">Execute Latency Ping</button>
-          <div class="latency-result" id="latency-result">Click button above to benchmark response latency.</div>
+        <div class="pricing-grid">
+          <!-- Tier 1 -->
+          <div class="pricing-card" data-tier="Community Pass" data-price="Free">
+            <span class="tier-pill">MOST POPULAR</span>
+            <h3 class="tier-name">Developer Community</h3>
+            <div class="tier-price">
+              <span class="currency">$</span>
+              <span class="amount">0</span>
+              <span class="period">/ Free</span>
+            </div>
+            <p class="tier-desc">Full access to live keynotes, virtual breakout sessions, and community expo.</p>
+            <ul class="tier-features">
+              <li>✓ All General Keynotes & Virtual Stream</li>
+              <li>✓ Digital Attendee Pass & QR Badge</li>
+              <li>✓ Access to Community Discord & Chat</li>
+              <li>✓ Sponsor Showcase & Giveaways</li>
+            </ul>
+            <button class="btn-tier-select" onclick="selectTier('Developer Community', 0)">Select Developer Pass</button>
+          </div>
+
+          <!-- Tier 2 -->
+          <div class="pricing-card featured" data-tier="Pro Pass" data-price="$49">
+            <span class="tier-pill highlight">RECOMMENDED</span>
+            <h3 class="tier-name">Professional Pass</h3>
+            <div class="tier-price">
+              <span class="currency">$</span>
+              <span class="amount">49</span>
+              <span class="period">/ person</span>
+            </div>
+            <p class="tier-desc">Designed for engineers seeking deep hands-on technical architecture labs.</p>
+            <ul class="tier-features">
+              <li>✓ Everything in Developer Community Pass</li>
+              <li>✓ In-Person JCC Venue Access & Catering</li>
+              <li>✓ Live Q&A with AWS Principal Architects</li>
+              <li>✓ Official Attendance Certificate (LKS Certified)</li>
+              <li>✓ Conference Swag Pack (T-Shirt & Sticker Kit)</li>
+            </ul>
+            <button class="btn-tier-select primary" onclick="selectTier('Professional Pass', 49)">Select Pro Pass</button>
+          </div>
+
+          <!-- Tier 3 -->
+          <div class="pricing-card" data-tier="All-Access VIP" data-price="$149">
+            <span class="tier-pill">VIP EXPERIENCE</span>
+            <h3 class="tier-name">All-Access VIP</h3>
+            <div class="tier-price">
+              <span class="currency">$</span>
+              <span class="amount">149</span>
+              <span class="period">/ person</span>
+            </div>
+            <p class="tier-desc">Complete VIP hospitality, private executive networking, and workshop seats.</p>
+            <ul class="tier-features">
+              <li>✓ Everything in Professional Pass</li>
+              <li>✓ VIP Front-Row Seating & Lounge Access</li>
+              <li>✓ Reserved Seat in 3 Hands-On Cloud Labs</li>
+              <li>✓ Exclusive Speaker Dinner & Networking</li>
+              <li>✓ Fast-Track Badge Check-In</li>
+            </ul>
+            <button class="btn-tier-select" onclick="selectTier('All-Access VIP', 149)">Select VIP Pass</button>
+          </div>
         </div>
 
-        <div class="tab-content" id="tab-specs">
-          <h3>Amplify Build Specification (`amplify.yml`)</h3>
-          <pre class="code-block"><code>version: 1
-frontend:
-  phases:
-    build:
-      commands:
-        - echo "Packaging static assets for Amplify Hosting..."
-  artifacts:
-    baseDirectory: /
-    files:
-      - '**/*'
-  cache:
-    paths: []</code></pre>
+        <!-- Registration Checkout Form -->
+        <div class="checkout-card" id="checkout-section">
+          <div class="checkout-header">
+            <h3>Attendee Registration Form</h3>
+            <p>Selected Tier: <strong id="selected-tier-label" class="highlight-text">Professional Pass ($49)</strong></p>
+          </div>
+
+          <form id="pass-registration-form" class="registration-form">
+            <input type="hidden" id="form-tier-input" value="Professional Pass">
+            <input type="hidden" id="form-price-input" value="49">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="attendee-name">Full Name <span class="req">*</span></label>
+                <input type="text" id="attendee-name" required placeholder="e.g. Alex Morgan" autocomplete="name">
+              </div>
+              <div class="form-group">
+                <label for="attendee-email">Email Address <span class="req">*</span></label>
+                <input type="email" id="attendee-email" required placeholder="alex.morgan@company.com" autocomplete="email">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="attendee-org">Company / School / Organization</label>
+                <input type="text" id="attendee-org" placeholder="e.g. CloudTech Systems / SMK LKS">
+              </div>
+              <div class="form-group">
+                <label for="attendee-role">Role / Job Title</label>
+                <input type="text" id="attendee-role" placeholder="e.g. Cloud Solutions Architect">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="attendee-track">Primary Focus Track</label>
+              <select id="attendee-track">
+                <option value="Serverless & Edge Computing">Serverless & Edge Computing</option>
+                <option value="Generative AI & Agentic Systems">Generative AI & Agentic Systems</option>
+                <option value="Multi-Region Cloud Architecture">Multi-Region Cloud Architecture</option>
+                <option value="DevOps & Platform Engineering">DevOps & Platform Engineering</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn-generate-pass" id="btn-submit-pass">
+              <span>Confirm & Generate Digital Badge</span>
+              <svg class="btn-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- VIEW 4: MY TICKETS & BADGES -->
+      <section class="spa-view" id="view-my-pass">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">My Registered Passes</h2>
+            <p class="section-subtitle">Your active conference digital tickets stored locally in your browser</p>
+          </div>
+        </div>
+
+        <div class="passes-container" id="passes-container">
+          <!-- Populated by JavaScript -->
         </div>
       </section>
     </main>
 
-    <footer>
-      <p>LKS Cloud Computing Demonstration Material · AWS Amplify Hosting</p>
+    <!-- BADGE PASS MODAL POPUP -->
+    <div class="modal-overlay" id="badge-modal">
+      <div class="modal-dialog badge-modal-dialog">
+        <!-- Digital Lanyard Badge Design -->
+        <div class="conference-badge" id="printable-badge">
+          <div class="badge-lanyard-hole"></div>
+          <div class="badge-header">
+            <span class="badge-event">AWS CLOUD SUMMIT 2026</span>
+            <span class="badge-edition" id="modal-badge-tier">PRO PASS</span>
+          </div>
+
+          <div class="badge-avatar-wrap">
+            <div class="badge-avatar-initials" id="modal-badge-avatar">AM</div>
+          </div>
+
+          <h3 class="badge-name" id="modal-badge-name">Alex Morgan</h3>
+          <p class="badge-role" id="modal-badge-role">Cloud Architect</p>
+          <span class="badge-org" id="modal-badge-org">CloudTech Systems</span>
+
+          <div class="badge-barcode-block">
+            <div class="badge-qr-box">
+              <!-- SVG Mock QR Code -->
+              <svg class="mock-qr" viewBox="0 0 100 100">
+                <rect width="100" height="100" fill="#ffffff"/>
+                <!-- Corner 1 -->
+                <rect x="10" y="10" width="25" height="25" fill="#000000"/>
+                <rect x="15" y="15" width="15" height="15" fill="#ffffff"/>
+                <rect x="18" y="18" width="9" height="9" fill="#000000"/>
+                <!-- Corner 2 -->
+                <rect x="65" y="10" width="25" height="25" fill="#000000"/>
+                <rect x="70" y="15" width="15" height="15" fill="#ffffff"/>
+                <rect x="73" y="18" width="9" height="9" fill="#000000"/>
+                <!-- Corner 3 -->
+                <rect x="10" y="65" width="25" height="25" fill="#000000"/>
+                <rect x="15" y="70" width="15" height="15" fill="#ffffff"/>
+                <rect x="18" y="73" width="9" height="9" fill="#000000"/>
+                <!-- Data dots -->
+                <rect x="42" y="15" width="6" height="6" fill="#000000"/>
+                <rect x="52" y="25" width="6" height="6" fill="#000000"/>
+                <rect x="42" y="42" width="16" height="16" fill="#FF9900"/>
+                <rect x="42" y="72" width="8" height="8" fill="#000000"/>
+                <rect x="72" y="52" width="6" height="6" fill="#000000"/>
+                <rect x="80" y="70" width="8" height="8" fill="#000000"/>
+              </svg>
+            </div>
+            <div class="badge-code-info">
+              <span class="code-label">TICKET ID</span>
+              <strong class="code-val" id="modal-badge-id">#SUMMIT-892A4C</strong>
+              <span class="status-indicator-chip">● ACTIVE & CONFIRMED</span>
+            </div>
+          </div>
+
+          <div class="badge-footer">
+            <span>Jakarta Convention Center • Nov 20-22</span>
+            <span>Edge Checked-In</span>
+          </div>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="modal-actions">
+          <button class="btn-print" onclick="window.print()">
+            <svg class="icon-svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd"/></svg>
+            <span>Print / Save Badge</span>
+          </button>
+          <button class="btn-done" id="btn-close-modal">View My Passes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Footer -->
+    <footer class="app-footer">
+      <div class="footer-container">
+        <div class="footer-strip">
+          <div class="feature-item">
+            <span class="icon">🚀</span>
+            <span><strong>Atomic CI/CD</strong> — Instant Rollbacks</span>
+          </div>
+          <div class="feature-item">
+            <span class="icon">🌐</span>
+            <span><strong>CloudFront Edge</strong> — 300+ Global PoPs</span>
+          </div>
+          <div class="feature-item">
+            <span class="icon">🔒</span>
+            <span><strong>Managed SSL</strong> — Free Auto-Renew ACM</span>
+          </div>
+          <div class="feature-item">
+            <span class="icon">🔀</span>
+            <span><strong>SPA 200 Rewrite</strong> — Deep Route Passthrough</span>
+          </div>
+        </div>
+        <div class="footer-copy">
+          <p>EventPass · AWS Amplify Demonstration Application · LKS Cloud Computing Training</p>
+        </div>
+      </div>
     </footer>
   </div>
 
   <script src="app.js"></script>
 </body>
 </html>
-
