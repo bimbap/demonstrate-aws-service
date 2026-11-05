@@ -10,6 +10,10 @@ A comprehensive architectural guide and hands-on material for **Amazon API Gatew
 |---|---|
 | [`openapi-mock-spec.yaml`](file:///m:/lks/task/demonstrates-material/api-gateway/openapi-mock-spec.yaml) | Complete OpenAPI 3.0 specification with AWS native `x-amazon-apigateway-integration: mock` extensions. Can be imported directly into AWS Console. |
 | [`curl-tests.sh`](file:///m:/lks/task/demonstrates-material/api-gateway/curl-tests.sh) | Executable bash script demonstrating real HTTP calls (`GET`, `POST`, `OPTIONS`) to test endpoints. |
+| [`infrastructure/README.md`](file:///m:/lks/task/demonstrates-material/api-gateway/infrastructure/README.md) | Architectural comparison matrix & decision tree across REST API, HTTP API, and WebSocket API. |
+| [`infrastructure/rest-api.md`](file:///m:/lks/task/demonstrates-material/api-gateway/infrastructure/rest-api.md) | Deep dive into REST API (v1) infrastructure, VTL mock integration, API Keys, and CloudFormation. |
+| [`infrastructure/http-api.md`](file:///m:/lks/task/demonstrates-material/api-gateway/infrastructure/http-api.md) | Deep dive into HTTP API (v2) infrastructure, payload format 2.0, native JWT/CORS, and VPC Link. |
+| [`infrastructure/websocket-api.md`](file:///m:/lks/task/demonstrates-material/api-gateway/infrastructure/websocket-api.md) | Deep dive into WebSocket API (v2) infrastructure, `$connect`/`$disconnect` lifecycle, DynamoDB connection table, and `@connections` callback push. |
 
 ---
 
