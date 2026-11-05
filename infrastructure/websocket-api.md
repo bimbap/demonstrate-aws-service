@@ -211,3 +211,4 @@ wscat -c "wss://{api-id}.execute-api.us-east-1.amazonaws.com/prod"
 - You need **continuous bi-directional push notifications** (Live Chat, Multiplayer Games, Real-Time Fleet Tracking).
 - You want to eliminate **polling latency and unnecessary HTTP request overhead**.
 - You need server-side push capabilities without maintaining long-running EC2/Docker Socket.IO servers.
+

@@ -177,3 +177,4 @@ aws apigatewayv2 create-stage --api-id $API_ID --stage-name '$default' --auto-de
 - You want **minimal cost** ($1.00 vs $3.50 per million requests).
 - You want **instant OIDC / Cognito JWT authorization** without writing custom auth Lambdas.
 - You do **not** require VTL payload transformations, API keys, or WAF at the gateway.
+

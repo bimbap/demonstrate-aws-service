@@ -47,3 +47,4 @@ Do you need real-time, bi-directional, push-based communication (e.g. Chat, Live
 1. **[`infrastructure/rest-api.md`](file:///m:/lks/task/demonstrates-material/api-gateway/infrastructure/rest-api.md)**: Resource tree hierarchy, method execution cycle, VTL mock integration, CloudFormation IaC, and CLI automation.
 2. **[`infrastructure/http-api.md`](file:///m:/lks/task/demonstrates-material/api-gateway/infrastructure/http-api.md)**: Route definitions, Payload Format Version 2.0, native JWT authorizer, auto-deploying stages, and VPC Link private integrations.
 3. **[`infrastructure/websocket-api.md`](file:///m:/lks/task/demonstrates-material/api-gateway/infrastructure/websocket-api.md)**: Stateful duplex connections, `$connect` / `$disconnect` lifecycle, DynamoDB connection tracking, and the `@connections` asynchronous push callback API.
+

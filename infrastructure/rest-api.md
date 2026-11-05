@@ -162,3 +162,4 @@ aws apigateway create-deployment --rest-api-id $API_ID --stage-name prod
 - You need **Request / Response Payload Transformation** via VTL before passing data to the backend.
 - You need **AWS WAF protection** directly at the API Gateway layer.
 - You need **Mock Integrations** for testing client contracts before backend development begins.
+
