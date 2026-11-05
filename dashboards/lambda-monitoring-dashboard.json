@@ -1,0 +1,56 @@
+{
+  "widgets": [
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 0,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [ "AWS/Lambda", "Invocations", "FunctionName", "lks-demo-logger", { "stat": "Sum", "color": "#1f77b4" } ],
+          [ ".", "Errors", ".", ".", { "stat": "Sum", "color": "#d62728" } ],
+          [ ".", "Throttles", ".", ".", { "stat": "Sum", "color": "#ff7f0e" } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Lambda Throughput, Errors & Throttles",
+        "period": 60
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 0,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [ "AWS/Lambda", "Duration", "FunctionName", "lks-demo-logger", { "stat": "Average", "label": "Avg Duration (ms)" } ],
+          [ "...", { "stat": "p95", "label": "p95 Duration (ms)" } ],
+          [ "...", { "stat": "Maximum", "label": "Max Duration (ms)" } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Execution Latency Dynamics",
+        "period": 60
+      }
+    },
+    {
+      "type": "log",
+      "x": 0,
+      "y": 6,
+      "width": 24,
+      "height": 6,
+      "properties": {
+        "query": "SOURCE '/aws/lambda/lks-demo-logger'\n| fields @timestamp, level, message, details.reason\n| filter level = 'ERROR'\n| sort @timestamp desc\n| limit 20",
+        "region": "us-east-1",
+        "title": "Recent Application Error Stream (CloudWatch Logs)",
+        "view": "table"
+      }
+    }
+  ]
+}
+
