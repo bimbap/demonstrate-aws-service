@@ -1,0 +1,129 @@
+openapi: 3.0.1
+info:
+  title: LKS Cloud Computing API Gateway Mock Demonstration
+  description: Standalone API Gateway specification with native Mock Integrations (zero backend required).
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      summary: Health Check Endpoint
+      responses:
+        "200":
+          description: Service health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  service:
+                    type: string
+                  timestamp:
+                    type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        responses:
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: |
+                {
+                  "status": "healthy",
+                  "service": "Amazon API Gateway Standalone Mock",
+                  "timestamp": "$context.requestTime",
+                  "requestId": "$context.requestId"
+                }
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+    options:
+      summary: CORS Support
+      responses:
+        "200":
+          description: Preflight CORS headers
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization'"
+
+  /products:
+    get:
+      summary: List Catalog Products
+      responses:
+        "200":
+          description: Mock catalog list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        responses:
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: |
+                {
+                  "page": 1,
+                  "total": 3,
+                  "products": [
+                    { "id": "AWS-EC2-01", "name": "Elastic Compute Cloud (EC2)", "category": "Compute", "tier": "Free Tier Eligible" },
+                    { "id": "AWS-S3-02", "name": "Simple Storage Service (S3)", "category": "Storage", "tier": "Pay as you go" },
+                    { "id": "AWS-DDB-03", "name": "DynamoDB NoSQL Engine", "category": "Database", "tier": "Serverless" }
+                  ]
+                }
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /orders:
+    post:
+      summary: Submit New Order
+      responses:
+        "201":
+          description: Order acknowledged
+          content:
+            application/json:
+              schema:
+                type: object
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: "{\"statusCode\": 201}"
+        responses:
+          default:
+            statusCode: "201"
+            responseTemplates:
+              application/json: |
+                {
+                  "status": "OrderCreated",
+                  "orderId": "ORD-LKS-2026-X89",
+                  "receivedAt": "$context.requestTime",
+                  "processingStage": "QUEUED_FOR_DISPATCH",
+                  "sourceIp": "$context.identity.sourceIp"
+                }
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
