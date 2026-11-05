@@ -1,0 +1,6 @@
+# AWS Lambda Python Dependencies
+# Note: boto3 and botocore are pre-installed in the AWS Lambda Python runtime.
+# Third-party packages like 'requests' must be packaged into the deployment zip or Lambda Layer.
+boto3>=1.34.0
+botocore>=1.34.0
+requests>=2.31.0

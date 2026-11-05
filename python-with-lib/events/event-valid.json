@@ -1,0 +1,6 @@
+{
+  "taskName": "CalculateFinancialAggregations",
+  "items": [150, 300, 450, 100],
+  "checkExternalHealth": true,
+  "simulateError": false
+}

@@ -1,0 +1,5 @@
+{
+  "taskName": "SimulateFailureWorkflow",
+  "simulateError": true,
+  "errorReason": "Simulated malformed event data to inspect CloudWatch error stream"
+}

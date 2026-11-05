@@ -1,0 +1,15 @@
+{
+  "name": "lambda-demo-node24-zero-lib",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AWS Lambda Node.js 24 demonstration with zero external dependencies",
+  "main": "index.js",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "test:local": "node -e \"import('./index.js').then(m => m.handler({ taskName: 'ZeroLibLocalTest', items: [50, 100, 150] }, { awsRequestId: 'local-node24-req', functionName: 'demo-zero-lib' })).then(r => console.log('Result:', r))\""
+  },
+  "author": "LKS Cloud Computing",
+  "license": "ISC"
+}

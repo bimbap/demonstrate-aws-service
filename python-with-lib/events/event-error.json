@@ -1,0 +1,5 @@
+{
+  "taskName": "TriggerSimulatedError",
+  "simulateError": true,
+  "errorReason": "Simulated Python exception to inspect CloudWatch error stream"
+}
