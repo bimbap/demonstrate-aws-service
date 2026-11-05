@@ -1,5 +1,5 @@
 {
-  "taskName": "CalculateCompetitionScores",
   "items": [85, 92, 78, 96, 88],
+  "targetUrl": "https://httpbin.org/status/200",
   "simulateError": false
 }

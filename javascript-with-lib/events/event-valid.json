@@ -1,0 +1,5 @@
+{
+  "checkExternalUrl": "https://httpbin.org/status/200",
+  "bucketName": "wa-sample-bucket",
+  "simulateError": false
+}
