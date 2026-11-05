@@ -35,6 +35,29 @@ Amazon API Gateway is a fully managed service that makes it easy for developers 
 
 ---
 
+## 🔗 API Endpoints
+
+**Base URL**: `https://{api-id}.execute-api.us-east-1.amazonaws.com/prod`
+
+All endpoints (except `/health`) support preflight CORS options (`OPTIONS`) and optional header `x-api-key: {your-api-key}` when usage plans are attached.
+
+### Core Service & Catalog
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/health` | Health check & VTL context metadata (`requestId`, `requestTime`, `sourceIp`) |
+| `GET` | `/products` | Mock product catalog list with tier and categories |
+| `OPTIONS` | `/health` | Preflight CORS handshake returning allowed headers & origins |
+
+### Transactions & Order Management
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/orders` | Submit new order & return synthetic order confirmation (`ORD-LKS-2026-X89`) |
+| `OPTIONS` | `/orders` | Preflight CORS handshake for order submission endpoint |
+
+---
+
 ## ⚖️ REST API vs. HTTP API vs. WebSocket API
 
 Understanding the distinction is critical for LKS competition problem statements:
@@ -103,4 +126,3 @@ For CORS to succeed in API Gateway:
    - `Access-Control-Allow-Methods: 'GET,POST,OPTIONS'`.
    - `Access-Control-Allow-Headers: 'Content-Type,Authorization'`.
 3. If using **Lambda Proxy Integration**, the Lambda response payload itself MUST also include the `Access-Control-Allow-Origin` header in its `headers` object!
-
