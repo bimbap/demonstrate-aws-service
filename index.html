@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Amplify Hosting — Interactive Demonstration</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="navbar">
+      <div class="brand">
+        <span class="logo-badge">AWS</span>
+        <h1>Amplify Hosting Demo</h1>
+      </div>
+      <div class="env-pill">
+        <span class="status-dot"></span>
+        <span id="env-badge">Production (CloudFront Edge)</span>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="hero-card">
+        <h2>Global Web Hosting & CI/CD Pipeline</h2>
+        <p>Demonstrating AWS Amplify managed hosting, atomic git deployments, edge caching, and client-side single page app (SPA) routing.</p>
+        <div class="metrics-strip">
+          <div class="metric-box">
+            <span class="label">Deployment Model</span>
+            <span class="val highlight">Serverless Managed</span>
+          </div>
+          <div class="metric-box">
+            <span class="label">Distribution</span>
+            <span class="val">CloudFront Global Edge</span>
+          </div>
+          <div class="metric-box">
+            <span class="label">SSL/TLS Security</span>
+            <span class="val success">Managed ACM (Auto-Renew)</span>
+          </div>
+          <div class="metric-box">
+            <span class="label">SPA Rewrites</span>
+            <span class="val">200 Status Passthrough</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="interactive-panel">
+        <nav class="tab-nav">
+          <button class="tab-btn active" data-tab="routing">1. SPA Client-Side Routing</button>
+          <button class="tab-btn" data-tab="env">2. Environment Variables</button>
+          <button class="tab-btn" data-tab="latency">3. Global Edge Latency</button>
+          <button class="tab-btn" data-tab="specs">4. amplify.yml Spec</button>
+        </nav>
+
+        <div class="tab-content active" id="tab-routing">
+          <h3>Simulating SPA Client-Side Route Handling</h3>
+          <p class="desc">In SPAs (React, Vue, or Vanilla), deep routes like <code>/dashboard</code> or <code>/profile</code> do not physically exist on disk. AWS Amplify uses <strong>Redirects & Rewrites</strong> to transparently serve <code>/index.html</code> with a <code>200 (Rewrite)</code> status code.</p>
+          <div class="route-buttons">
+            <button class="btn-route" onclick="navigateTo('/overview')">Go to /overview</button>
+            <button class="btn-route" onclick="navigateTo('/analytics')">Go to /analytics</button>
+            <button class="btn-route" onclick="navigateTo('/settings')">Go to /settings</button>
+          </div>
+          <div class="route-display">
+            <span>Simulated Active Route: </span>
+            <strong id="active-path">/overview</strong>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-env">
+          <h3>Runtime Environment Configuration</h3>
+          <p class="desc">Amplify allows configuring build-time and runtime environment variables without checking secrets into version control.</p>
+          <div class="env-table-wrapper">
+            <table class="env-table">
+              <thead>
+                <tr>
+                  <th>Variable Key</th>
+                  <th>Resolved Value</th>
+                  <th>Scope</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>AMPLIFY_ENV</code></td>
+                  <td><span class="tag">production</span></td>
+                  <td>Global</td>
+                </tr>
+                <tr>
+                  <td><code>AWS_REGION</code></td>
+                  <td><span class="tag">us-east-1 (Global Edge)</span></td>
+                  <td>Hosting</td>
+                </tr>
+                <tr>
+                  <td><code>API_ENDPOINT_URL</code></td>
+                  <td><span class="tag">https://api.example.com/prod</span></td>
+                  <td>Application</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-latency">
+          <h3>Edge Latency Ping Simulator</h3>
+          <p class="desc">Measure connection latency to the nearest CloudFront Point of Presence (PoP).</p>
+          <button class="btn-action" id="btn-ping" onclick="runPingTest()">Execute Latency Ping</button>
+          <div class="latency-result" id="latency-result">Click button above to benchmark response latency.</div>
+        </div>
+
+        <div class="tab-content" id="tab-specs">
+          <h3>Amplify Build Specification (`amplify.yml`)</h3>
+          <pre class="code-block"><code>version: 1
+frontend:
+  phases:
+    build:
+      commands:
+        - echo "Packaging static assets for Amplify Hosting..."
+  artifacts:
+    baseDirectory: /
+    files:
+      - '**/*'
+  cache:
+    paths: []</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>LKS Cloud Computing Demonstration Material · AWS Amplify Hosting</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
