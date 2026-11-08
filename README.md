@@ -1,23 +1,27 @@
-# AWS Lambda Demonstration Materials — Dual Flavor Architecture
+# AWS Lambda Demonstration Materials — Quad-Flavor Architecture Matrix
 
-Interactive demonstration packages for **AWS Lambda** comparing two foundational serverless design patterns:
-1. **With External Libraries** (Modern Node.js 24 ESM with AWS SDK v3 `@aws-sdk/client-s3` & Axios `axios`)
-2. **Zero External Library** (Pure Vanilla Python 3.12 Standard Library with `urllib.request`)
+Interactive demonstration packages for **AWS Lambda** presenting the complete $2 \times 2$ architectural matrix across **Languages** (Node.js & Python) and **Dependency Management Patterns** (Zero External Library vs With External Libraries):
+
+1. **Node.js (Zero-Lib)**: Pure Vanilla Node.js 20/24 ESM with native global `fetch()` and `node:crypto`.
+2. **Node.js (With-Lib)**: Enterprise Node.js 24 ESM with AWS SDK v3 (`@aws-sdk/client-s3`) & Axios (`axios`).
+3. **Python (Zero-Lib)**: Pure Vanilla Python 3.12/3.13 Standard Library with native `urllib.request`.
+4. **Python (With-Lib)**: Packaged Python 3.12/3.13 with third-party HTTP client (`requests`).
 
 ---
 
-## ⚖️ Architectural Comparison
+## ⚖️ Architectural Matrix Comparison
 
-| Dimension | Flavor A: Node.js 24 With-Lib | Flavor B: Python 3.12 Zero-Lib |
-|---|---|---|
-| **Directory** | [`javascript-with-lib/`](file:///m:/lks/task/demonstrates-material/lambda/javascript-with-lib/) | [`python-zero-lib/`](file:///m:/lks/task/demonstrates-material/lambda/python-zero-lib/) |
-| **Language & Runtime** | JavaScript (`.js`), Node.js 24.x ESM | Python (`.py`), Python 3.12 / 3.13 |
-| **Third-Party Packages** | `@aws-sdk/client-s3`, `axios` | **None (100% Native Python Standard Library)** |
-| **Packaging Step** | Zip archive with `node_modules/` or Lambda Layer | **None** (instant copy-paste in AWS Console web editor) |
-| **Cold Start Latency** | ~120ms–250ms (bundle decompression) | **Sub-50ms** (minimal container init overhead) |
-| **CloudWatch Logging** | Structured JSON (`console.log`) | Structured JSON (`print(json.dumps)`) |
-| **Custom Metrics** | Native Embedded Metric Format (EMF) | Native Embedded Metric Format (EMF) |
-| **Ideal Use Case** | Full-scale microservices, rich HTTP clients, multi-service AWS orchestration | Fast webhooks, lightweight alert processors, instant competition tasks |
+| Dimension | Node.js (Zero-Lib) | Node.js (With-Lib) | Python (Zero-Lib) | Python (With-Lib) |
+|---|---|---|---|---|
+| **Directory** | [`javascript-zero-lib/`](javascript-zero-lib/) | [`javascript-with-lib/`](javascript-with-lib/) | [`python-zero-lib/`](python-zero-lib/) | [`python-with-lib/`](python-with-lib/) |
+| **Runtime** | Node.js 20.x / 24.x ESM | Node.js 24.x ESM | Python 3.12 / 3.13 | Python 3.12 / 3.13 |
+| **External Packages** | **None (0 dependencies)** | `@aws-sdk/client-s3`, `axios` | **None (0 dependencies)** | `requests` (third-party) |
+| **Packaging Step** | **None** (direct console paste) | Zip bundle or Lambda Layer | **None** (direct console paste) | Zip bundle with `-t .` or Layer |
+| **Cold Start Latency** | **Sub-40ms** | ~120ms–250ms | **Sub-50ms** | ~90ms–180ms |
+| **HTTP Client API** | Native global `fetch()` | `axios.get()` | Native `urllib.request` | `requests.get()` |
+| **CloudWatch Logging** | Structured JSON (`console.log`) | Structured JSON (`console.log`) | Structured JSON (`print(json.dumps)`) | Structured JSON (`print(json.dumps)`) |
+| **Custom Metrics** | Native CloudWatch EMF | Native CloudWatch EMF | Native CloudWatch EMF | Native CloudWatch EMF |
+| **Primary Use Case** | Ultra-fast webhooks, zero supply-chain risk | Rich microservices & AWS SDK calls | Rapid competition tasks, lightweight scripts | Advanced data fetching & REST API calls |
 
 ---
 
@@ -25,17 +29,29 @@ Interactive demonstration packages for **AWS Lambda** comparing two foundational
 
 ```text
 lambda/
-├── README.md                      # Dual-flavor index and comparative analysis
-├── javascript-with-lib/           # Node.js 24 implementation with external libraries
+├── README.md                      # Quad-flavor index and comparative matrix
+├── javascript-zero-lib/           # Vanilla Node.js 20/24 ESM (Native fetch, crypto, zero npm)
+│   ├── index.js                   # 100% native ESM handler
+│   ├── package.json               # Manifest specifying "type": "module"
+│   ├── test-local.js              # Offline test harness (cold/warm/error cycles)
+│   ├── README.md                  # Deployment & architectural guide
+│   └── events/                    # Valid & error test payloads
+├── javascript-with-lib/           # Node.js 24 ESM with external dependencies
 │   ├── index.js                   # ESM handler using @aws-sdk/client-s3 and axios
-│   ├── package.json               # Manifest specifying Node >=24.0.0 and dependencies
+│   ├── package.json               # Manifest specifying dependencies
 │   ├── test-local.js              # Offline test suite simulating cold/warm/error runs
 │   ├── README.md                  # Zip packaging & Lambda Layer deployment guide
 │   └── events/                    # Valid & error test payloads
-└── python-zero-lib/               # Python 3.12 serverless implementation with zero dependencies
-    ├── lambda_function.py         # 100% standard library handler using urllib.request
-    ├── test-local.py              # Offline test suite validating execution logic
-    ├── README.md                  # Console direct paste & CLI deployment guide
+├── python-zero-lib/               # Vanilla Python 3.12 (100% standard library)
+│   ├── lambda_function.py         # Standard library handler using urllib.request
+│   ├── test-local.py              # Offline test suite validating execution logic
+│   ├── README.md                  # Direct console paste & CLI deployment guide
+│   └── events/                    # Valid & error test payloads
+└── python-with-lib/               # Python 3.12 with external packages
+    ├── lambda_function.py         # Handler using third-party requests library
+    ├── requirements.txt           # Dependency manifest (requests>=2.31.0)
+    ├── test-local.py              # Offline test harness with mock fallback
+    ├── README.md                  # Packaging (zip/layer) & deployment guide
     └── events/                    # Valid & error test payloads
 ```
 
@@ -43,14 +59,18 @@ lambda/
 
 ## 🚀 Quick Local Testing
 
-### 1. Test Node.js 24 With-Library Handler
-```bash
-cd javascript-with-lib
-node test-local.js
-```
+Test each flavor locally using its respective runner:
 
-### 2. Test Python Zero-Library Handler
 ```bash
-cd python-zero-lib
-python test-local.py
+# 1. Test Node.js (Zero-Lib) Handler
+cd javascript-zero-lib && node test-local.js && cd ..
+
+# 2. Test Node.js (With-Lib) Handler
+cd javascript-with-lib && node test-local.js && cd ..
+
+# 3. Test Python (Zero-Lib) Handler
+cd python-zero-lib && python test-local.py && cd ..
+
+# 4. Test Python (With-Lib) Handler
+cd python-with-lib && python test-local.py && cd ..
 ```

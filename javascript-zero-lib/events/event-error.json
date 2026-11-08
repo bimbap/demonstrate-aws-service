@@ -1,0 +1,4 @@
+{
+  "simulateError": true,
+  "errorReason": "Simulated Node.js zero-lib exception to test error handling & CloudWatch logs"
+}

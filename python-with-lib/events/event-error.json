@@ -1,0 +1,4 @@
+{
+  "simulateError": true,
+  "errorReason": "Simulated Python runtime exception to verify CloudWatch error log streaming and alert metrics"
+}

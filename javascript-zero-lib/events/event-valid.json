@@ -1,0 +1,8 @@
+{
+  "checkExternalUrl": "https://httpbin.org/status/200",
+  "simulateError": false,
+  "payload": {
+    "module": "wa-serverless-demo",
+    "batchId": "batch-101"
+  }
+}

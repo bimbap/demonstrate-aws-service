@@ -1,0 +1,8 @@
+{
+  "targetUrl": "https://httpbin.org/status/200",
+  "simulateError": false,
+  "servicePayload": {
+    "module": "wa-serverless-demo",
+    "batchId": "python-with-lib-101"
+  }
+}
