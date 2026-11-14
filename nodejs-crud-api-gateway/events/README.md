@@ -25,7 +25,7 @@ Reference guide for testing the CRUD REST API (`https://py4o28qqd9.execute-api.u
 > Use `BASE="..."` (no `$` on assignment, no spaces around `=`) and single-quoted JSON `'{"name":...}'`.
 
 ```bash
-BASE="https://py4o28qqd9.execute-api.us-east-1.amazonaws.com/prod"
+BASE="https://{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com/prod"
 
 # 1. CREATE (POST /items)
 curl -X POST "$BASE/items" \
@@ -54,7 +54,7 @@ curl -X DELETE "$BASE/items/<ID>"
 > In PowerShell, `curl` is an alias for `Invoke-WebRequest`. Always use **`curl.exe`** and escape inner double quotes with `\"`.
 
 ```powershell
-$BASE = "https://{py4o28qqd9}.execute-api.us-east-1.amazonaws.com/prod"
+$BASE = "https://{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com/prod"
 
 # 1. CREATE (POST /items)
 curl.exe -X POST "$BASE/items" `
@@ -74,6 +74,32 @@ curl.exe -X PUT "$BASE/items/<ID>" `
 
 # 5. DELETE (DELETE /items/<ID>)
 curl.exe -X DELETE "$BASE/items/<ID>"
+```
+
+---
+
+## 🔌 WebSocket API CLI Testing (`wss://.../production/`)
+
+### Option A: Interactive via `wscat` (Git Bash & PowerShell)
+```bash
+npx wscat -c "wss://ggbnjn9q75.execute-api.us-east-1.amazonaws.com/production/"
+```
+Once connected, send JSON messages one by one:
+```json
+{"action":"create","name":"Demo WS","description":"Test dari wscat"}
+{"action":"list"}
+{"action":"get","id":"<ID>"}
+{"action":"update","id":"<ID>","name":"Demo WS Updated"}
+{"action":"delete","id":"<ID>"}
+```
+
+### Option B: Quick One-Liner via Node.js (Git Bash)
+```bash
+node -e '
+const ws = new WebSocket("wss://ggbnjn9q75.execute-api.us-east-1.amazonaws.com/production/");
+ws.onopen = () => ws.send(JSON.stringify({ action: "list" }));
+ws.onmessage = (e) => { console.log("WS:", e.data); ws.close(); };
+'
 ```
 
 ---

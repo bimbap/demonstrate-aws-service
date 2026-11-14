@@ -3,8 +3,8 @@
     "routeKey": "$connect",
     "eventType": "CONNECT",
     "connectionId": "ws-conn-demo-001",
-    "domainName": "demo.execute-api.us-east-1.amazonaws.com",
-    "stage": "prod"
+    "domainName": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com",
+    "stage": "production"
   },
   "isBase64Encoded": false
 }
