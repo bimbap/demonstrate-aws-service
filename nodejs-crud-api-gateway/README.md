@@ -56,6 +56,7 @@ node test-local.js
 ### 1. Create DynamoDB Table
 - **Table name:** `wa-demo-items` (or set env var `DYNAMODB_TABLE`)
 - **Partition key:** `id` (`String`)
+- **Sort key:** *(leave empty / none)*
 
 ### 2. Create Lambda Function (`nodejs26.x`)
 - **Runtime:** `Node.js 26.x` (`nodejs26.x`, compatible down to `nodejs20.x`)
@@ -70,5 +71,11 @@ node test-local.js
    - `/items` with methods `GET`, `POST`
    - `/items/{id}` with methods `GET`, `PUT`, `DELETE`
 3. For each method, choose **Integration type: Lambda Function** and **enable "Lambda Proxy integration"** (required so `event.httpMethod`, `event.pathParameters`, and `event.body` are passed intact).
-4. Enable **CORS** on `/items` and `/items/{id}` if calling from a browser frontend, then click **Deploy API** to a stage (e.g. `prod` or `dev`).
+4. **CORS & Deploy API** (keep API Gateway's default CORS headers when enabled; re-deploy to a stage such as `prod` or `dev` after changes):
+
+   | Resource / API | Methods / Routes | Enable CORS? |
+   |---|---|---|
+   | `/items` | `GET`, `POST` | **Yes** *(if called from browser)* |
+   | `/items/{id}` | `GET`, `PUT`, `DELETE` | **Yes** *(if called from browser)* |
+   | WebSocket API | `$connect`, `$disconnect`, `$default` | **No** *(not applicable)* |
 
