@@ -69,7 +69,7 @@ const SESSIONS_DATA = [
     level: "EXPERT (400)",
     time: "Day 3 • 10:00 - 11:30 WIB",
     room: "Auditorium Hall B",
-    speaker: "Sarah Chen",
+    speaker: "Colombus Bona",
     speakerOrg: "VP of Cloud Engineering",
     avatarInitials: "SC",
     description: "Hands-on architectural patterns for sub-second RTO and zero-RPO database replication across Virginia (us-east-1) and Singapore (ap-southeast-1)."
