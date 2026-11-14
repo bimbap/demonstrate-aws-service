@@ -7,9 +7,16 @@
   },
   "queryStringParameters": null,
   "headers": {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Host": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com"
+  },
+  "requestContext": {
+    "resourcePath": "/items/{id}",
+    "httpMethod": "PUT",
+    "path": "/prod/items/replace-with-item-id",
+    "stage": "prod",
+    "domainName": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com"
   },
   "body": "{\"name\":\"AWS Lambda Workshop (Updated)\",\"description\":\"Updated via API Gateway REST API PUT\"}",
   "isBase64Encoded": false
 }
-

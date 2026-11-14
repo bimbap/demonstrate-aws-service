@@ -6,8 +6,16 @@
     "id": "replace-with-item-id"
   },
   "queryStringParameters": null,
-  "headers": {},
+  "headers": {
+    "Host": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com"
+  },
+  "requestContext": {
+    "resourcePath": "/items/{id}",
+    "httpMethod": "GET",
+    "path": "/prod/items/replace-with-item-id",
+    "stage": "prod",
+    "domainName": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com"
+  },
   "body": null,
   "isBase64Encoded": false
 }
-

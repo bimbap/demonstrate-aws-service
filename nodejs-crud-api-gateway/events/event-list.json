@@ -4,8 +4,16 @@
   "resource": "/items",
   "pathParameters": null,
   "queryStringParameters": null,
-  "headers": {},
+  "headers": {
+    "Host": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com"
+  },
+  "requestContext": {
+    "resourcePath": "/items",
+    "httpMethod": "GET",
+    "path": "/prod/items",
+    "stage": "prod",
+    "domainName": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com"
+  },
   "body": null,
   "isBase64Encoded": false
 }
-

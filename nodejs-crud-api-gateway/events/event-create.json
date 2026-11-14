@@ -5,9 +5,16 @@
   "pathParameters": null,
   "queryStringParameters": null,
   "headers": {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Host": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com"
+  },
+  "requestContext": {
+    "resourcePath": "/items",
+    "httpMethod": "POST",
+    "path": "/prod/items",
+    "stage": "prod",
+    "domainName": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com"
   },
   "body": "{\"name\":\"AWS Lambda Workshop\",\"description\":\"CRUD demo with Node.js 26.x, API Gateway REST API, and DynamoDB\"}",
   "isBase64Encoded": false
 }
-

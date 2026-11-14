@@ -5,9 +5,16 @@
   "pathParameters": null,
   "queryStringParameters": null,
   "headers": {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Host": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com"
+  },
+  "requestContext": {
+    "resourcePath": "/items",
+    "httpMethod": "POST",
+    "path": "/prod/items",
+    "stage": "prod",
+    "domainName": "{YOUR_API_ID}.execute-api.us-east-1.amazonaws.com"
   },
   "body": "{\"description\":\"Missing required name field\"}",
   "isBase64Encoded": false
 }
-
