@@ -76,5 +76,32 @@ const errorRes = await handler(loadEvent("event-error.json"), mockContext);
 console.log(`Status: ${errorRes.statusCode}`, JSON.parse(errorRes.body));
 assert.equal(errorRes.statusCode, 400);
 
-console.log("\n[SUCCESS] All CRUD API Gateway + DynamoDB local tests passed!");
+// 8. WEBSOCKET $connect -> create -> list -> delete -> $disconnect
+console.log("\n--> 8. WebSocket $connect");
+const wsConnect = await handler(loadEvent("event-ws-connect.json"), mockContext);
+assert.equal(wsConnect.statusCode, 200);
+
+console.log("\n--> 9. WebSocket $default (action: create)");
+const wsCreate = await handler(loadEvent("event-ws-crud.json"), mockContext);
+const wsCreateBody = JSON.parse(wsCreate.body);
+console.log(`Status: ${wsCreate.statusCode}`, wsCreateBody);
+assert.equal(wsCreate.statusCode, 201);
+
+console.log("\n--> 10. WebSocket $default (action: list & delete)");
+const wsBase = loadEvent("event-ws-crud.json");
+const wsList = await handler({ ...wsBase, body: JSON.stringify({ action: "list" }) }, mockContext);
+assert.equal(wsList.statusCode, 200);
+assert.equal(JSON.parse(wsList.body).count, 1);
+
+const wsDelete = await handler(
+  { ...wsBase, body: JSON.stringify({ action: "delete", id: wsCreateBody.data.id }) },
+  mockContext
+);
+assert.equal(wsDelete.statusCode, 200);
+
+console.log("\n--> 11. WebSocket $disconnect");
+const wsDisconnect = await handler(loadEvent("event-ws-disconnect.json"), mockContext);
+assert.equal(wsDisconnect.statusCode, 200);
+
+console.log("\n[SUCCESS] All REST & WebSocket CRUD API Gateway + DynamoDB local tests passed!");
 

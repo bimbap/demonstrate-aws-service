@@ -1,0 +1,11 @@
+{
+  "requestContext": {
+    "routeKey": "$default",
+    "eventType": "MESSAGE",
+    "connectionId": "ws-conn-demo-001",
+    "domainName": "demo.execute-api.us-east-1.amazonaws.com",
+    "stage": "prod"
+  },
+  "body": "{\"action\":\"create\",\"name\":\"WebSocket Workshop Item\",\"description\":\"Created via API Gateway WebSocket $default route\"}",
+  "isBase64Encoded": false
+}

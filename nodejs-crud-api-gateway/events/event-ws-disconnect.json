@@ -1,0 +1,10 @@
+{
+  "requestContext": {
+    "routeKey": "$disconnect",
+    "eventType": "DISCONNECT",
+    "connectionId": "ws-conn-demo-001",
+    "domainName": "demo.execute-api.us-east-1.amazonaws.com",
+    "stage": "prod"
+  },
+  "isBase64Encoded": false
+}

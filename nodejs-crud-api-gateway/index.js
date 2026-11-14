@@ -1,5 +1,5 @@
 /**
- * AWS Lambda CRUD Handler — API Gateway (REST API v1.0) + Amazon DynamoDB
+ * AWS Lambda CRUD Handler — API Gateway (REST API v1.0 & WebSocket) + Amazon DynamoDB
  * Runtime: Node.js 20.x / 22.x / 24.x / 26.x ESM
  *
  * Note on AWS Lambda Layers:
@@ -297,6 +297,81 @@ async function handleDelete(docClient, { DeleteCommand }, id, requestId) {
   }
 }
 
+async function sendWebSocketReply(mode, event, payload) {
+  const { connectionId, domainName, stage } = event?.requestContext || {};
+  if (mode !== "dynamodb" || !connectionId || !domainName || !stage) {
+    return;
+  }
+
+  try {
+    const { ApiGatewayManagementApiClient, PostToConnectionCommand } = await import(
+      "@aws-sdk/client-apigatewaymanagementapi"
+    );
+    const client = new ApiGatewayManagementApiClient({
+      endpoint: `https://${domainName}/${stage}`,
+      region: AWS_REGION
+    });
+    await client.send(
+      new PostToConnectionCommand({
+        ConnectionId: connectionId,
+        Data: Buffer.from(JSON.stringify(payload))
+      })
+    );
+  } catch (err) {
+    console.warn(
+      JSON.stringify({
+        level: "WARN",
+        message: "Failed to push WebSocket reply to connection",
+        connectionId,
+        error: err.message
+      })
+    );
+  }
+}
+
+async function handleWebSocket(docClient, commands, mode, event, requestId) {
+  const { routeKey, connectionId } = event.requestContext;
+
+  if (routeKey === "$connect") {
+    return jsonResponse(200, { success: true, event: "connected", connectionId, requestId });
+  }
+  if (routeKey === "$disconnect") {
+    return jsonResponse(200, { success: true, event: "disconnected", connectionId, requestId });
+  }
+
+  let payload;
+  try {
+    payload = parseBody(event);
+  } catch {
+    return jsonResponse(400, { success: false, error: "Invalid JSON WebSocket message", requestId });
+  }
+
+  const action = (payload?.action || routeKey || "").toLowerCase();
+  const syntheticEvent = { body: payload };
+  let response;
+
+  if (action === "create") {
+    response = await handleCreate(docClient, commands, syntheticEvent, requestId);
+  } else if (action === "list") {
+    response = await handleList(docClient, commands, requestId);
+  } else if (action === "get" && payload?.id) {
+    response = await handleGet(docClient, commands, payload.id, requestId);
+  } else if (action === "update" && payload?.id) {
+    response = await handleUpdate(docClient, commands, payload.id, syntheticEvent, requestId);
+  } else if (action === "delete" && payload?.id) {
+    response = await handleDelete(docClient, commands, payload.id, requestId);
+  } else {
+    response = jsonResponse(400, {
+      success: false,
+      error: "Unsupported WebSocket action. Use action: create | list | get | update | delete",
+      requestId
+    });
+  }
+
+  await sendWebSocketReply(mode, event, JSON.parse(response.body));
+  return response;
+}
+
 export const handler = async (event, context) => {
   executionCounter += 1;
   const isColdStart = executionCounter === 1;
@@ -304,6 +379,7 @@ export const handler = async (event, context) => {
   const requestId = context?.awsRequestId || crypto.randomUUID();
   const functionName = context?.functionName || "wa-demo-nodejs-crud-api-gw";
 
+  const isWebSocket = Boolean(event?.requestContext?.connectionId && event?.requestContext?.routeKey);
   const method = (event?.httpMethod || "GET").toUpperCase();
   const path = event?.path || "/items";
   const itemId = event?.pathParameters?.id;
@@ -312,11 +388,17 @@ export const handler = async (event, context) => {
   console.log(
     JSON.stringify({
       level: "INFO",
-      message: "API Gateway REST request received",
+      message: isWebSocket
+        ? "API Gateway WebSocket request received"
+        : "API Gateway REST request received",
       requestId,
-      method,
-      path,
-      itemId: itemId || null,
+      protocol: isWebSocket ? "WEBSOCKET" : "REST",
+      ...(isWebSocket
+        ? {
+            routeKey: event.requestContext.routeKey,
+            connectionId: event.requestContext.connectionId
+          }
+        : { method, path, itemId: itemId || null }),
       storageMode: mode,
       tableName: TABLE_NAME,
       nodeVersion: process.version,
@@ -327,13 +409,15 @@ export const handler = async (event, context) => {
     })
   );
 
-  if (method === "OPTIONS") {
+  if (!isWebSocket && method === "OPTIONS") {
     return jsonResponse(200, { ok: true });
   }
 
   try {
     let response;
-    if (method === "POST" && !itemId) {
+    if (isWebSocket) {
+      response = await handleWebSocket(docClient, commands, mode, event, requestId);
+    } else if (method === "POST" && !itemId) {
       response = await handleCreate(docClient, commands, event, requestId);
     } else if (method === "GET" && !itemId) {
       response = await handleList(docClient, commands, requestId);

@@ -1,13 +1,13 @@
-# AWS Lambda CRUD Demonstration — API Gateway (REST API) + DynamoDB (Node.js 20.x–26.x ESM)
+# AWS Lambda CRUD Demonstration — API Gateway (REST API & WebSocket) + DynamoDB (Node.js 20.x–26.x ESM)
 
-A production-style CRUD demonstration for **AWS Lambda** integrated with **Amazon API Gateway (REST API v1.0 Proxy)** and **Amazon DynamoDB**, compatible with **Node.js 20.x, 22.x, 24.x, and 26.x** (`nodejs26.x` recommended).
+A production-style CRUD demonstration for **AWS Lambda** integrated with **Amazon API Gateway (REST API v1.0 Proxy & WebSocket API)** and **Amazon DynamoDB**, compatible with **Node.js 20.x, 22.x, 24.x, and 26.x** (`nodejs26.x` recommended).
 
 ---
 
-## ❓ Do You Need a Lambda Layer for DynamoDB?
+## ❓ Do You Need a Lambda Layer for DynamoDB or WebSocket?
 
 - **For AWS Console Demo / Quick Deployment: NO.**
-  AWS Lambda managed Node.js runtimes (`nodejs20.x` through `nodejs26.x`) **already include AWS SDK for JavaScript v3** (`@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`). You can paste `index.js` directly into the AWS Lambda Console editor without uploading a Layer or `node_modules/`.
+  AWS Lambda managed Node.js runtimes (`nodejs20.x` through `nodejs26.x`) **already include AWS SDK for JavaScript v3** (`@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`, `@aws-sdk/client-apigatewaymanagementapi`). You just need `index.js` + `package.json` (`"type": "module"`) — no Layer or `node_modules/` required.
 - **For Production Workloads: RECOMMENDED.**
   Bundling `@aws-sdk/*` in a `.zip` or **Lambda Layer** pins your exact SDK version so AWS runtime updates never introduce unexpected SDK changes, and allows offline `npm test` against the real SDK package.
 
@@ -23,6 +23,20 @@ A production-style CRUD demonstration for **AWS Lambda** integrated with **Amazo
 | `PUT` | `/items/{id}` | Update `name` or `description` (`UpdateCommand`) | `200 OK` / `404` |
 | `DELETE` | `/items/{id}` | Delete item by ID (`DeleteCommand`) | `200 OK` / `404` |
 | `OPTIONS` | `/*` | CORS preflight response | `200 OK` |
+
+### WebSocket API Routes (`$connect`, `$disconnect`, `$default`)
+
+| Route Key | Message Payload | Action |
+|---|---|---|
+| `$connect` | *(none)* | Acknowledge WebSocket connection (`200`) |
+| `$disconnect` | *(none)* | Acknowledge WebSocket disconnect (`200`) |
+| `$default` | `{"action":"create","name":"...","description":"..."}` | Create item & push reply |
+| `$default` | `{"action":"list"}` | List all items & push reply |
+| `$default` | `{"action":"get","id":"..."}` | Get item by ID & push reply |
+| `$default` | `{"action":"update","id":"...","name":"..."}` | Update item & push reply |
+| `$default` | `{"action":"delete","id":"..."}` | Delete item & push reply |
+
+*(For live WebSocket push-back via `ApiGatewayManagementApiClient`, grant `execute-api:ManageConnections` on the Lambda execution role).*
 
 ---
 
