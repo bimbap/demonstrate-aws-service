@@ -1,0 +1,15 @@
+{
+  "httpMethod": "PUT",
+  "path": "/items/replace-with-item-id",
+  "resource": "/items/{id}",
+  "pathParameters": {
+    "id": "replace-with-item-id"
+  },
+  "queryStringParameters": null,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"name\":\"AWS Lambda Workshop (Updated)\",\"description\":\"Updated via API Gateway REST API PUT\"}",
+  "isBase64Encoded": false
+}
+

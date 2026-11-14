@@ -1,0 +1,13 @@
+{
+  "httpMethod": "POST",
+  "path": "/items",
+  "resource": "/items",
+  "pathParameters": null,
+  "queryStringParameters": null,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"name\":\"AWS Lambda Workshop\",\"description\":\"CRUD demo with Node.js 26.x, API Gateway REST API, and DynamoDB\"}",
+  "isBase64Encoded": false
+}
+

@@ -1,7 +1,7 @@
 import { handler } from "./index.js";
 import fs from "node:fs";
 
-console.log("=== Testing Node.js 20/24 Lambda (Zero-Lib) Locally ===\n");
+console.log("=== Testing Node.js 20.x-26.x Lambda (Zero-Lib) Locally ===\n");
 
 const validEvent = JSON.parse(fs.readFileSync("./events/event-valid.json", "utf-8"));
 const errorEvent = JSON.parse(fs.readFileSync("./events/event-error.json", "utf-8"));
@@ -32,7 +32,7 @@ console.log(`Status: ${res3.statusCode}`);
 console.log("Response Body:", JSON.parse(res3.body));
 
 if (res1.statusCode === 200 && res3.statusCode === 400) {
-  console.log("\n[SUCCESS] All Node.js 20/24 (Zero-Lib) local tests passed!");
+  console.log("\n[SUCCESS] All Node.js 20.x-26.x (Zero-Lib) local tests passed!");
 } else {
   console.error("\n[FAILURE] Unexpected status code returned.");
   process.exit(1);

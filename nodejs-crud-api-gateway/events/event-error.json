@@ -1,0 +1,13 @@
+{
+  "httpMethod": "POST",
+  "path": "/items",
+  "resource": "/items",
+  "pathParameters": null,
+  "queryStringParameters": null,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"description\":\"Missing required name field\"}",
+  "isBase64Encoded": false
+}
+

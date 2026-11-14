@@ -1,6 +1,6 @@
 /**
- * AWS Lambda Demonstration Handler — Zero External Library (Vanilla Node.js 20/24 ESM)
- * Runtime: Node.js 20.x / 24.x ESM
+ * AWS Lambda Demonstration Handler — Zero External Library (Vanilla Node.js 20.x-26.x ESM)
+ * Runtime: Node.js 20.x / 22.x / 24.x / 26.x ESM
  * Dependencies: NONE (100% Native Node.js Standard Library & Global Web APIs)
  * 
  * Demonstrates:
@@ -134,7 +134,7 @@ export const handler = async (event, context) => {
     },
     body: JSON.stringify({
       success: true,
-      message: "Node.js 20/24 (Zero-Lib) Lambda execution completed successfully",
+      message: "Node.js (Zero-Lib) Lambda execution completed successfully",
       data: {
         isColdStart,
         executionCounter,

@@ -1,0 +1,13 @@
+{
+  "httpMethod": "DELETE",
+  "path": "/items/replace-with-item-id",
+  "resource": "/items/{id}",
+  "pathParameters": {
+    "id": "replace-with-item-id"
+  },
+  "queryStringParameters": null,
+  "headers": {},
+  "body": null,
+  "isBase64Encoded": false
+}
+

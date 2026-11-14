@@ -170,7 +170,8 @@ def lambda_handler(event, context):
                 "executionCounter": EXECUTION_COUNTER,
                 "durationMs": execution_duration_ms,
                 "externalProbe": external_probe,
-                "libraryUsed": "requests (third-party package)",
+                "libraryUsed": "requests (third-party package)" if HAS_NATIVE_REQUESTS else "urllib fallback (offline mock)",
+                "hasNativeRequests": HAS_NATIVE_REQUESTS,
                 "runtime": f"Python {sys.version.split()[0]}"
             },
             "requestId": request_id

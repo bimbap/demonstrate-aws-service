@@ -32,7 +32,16 @@ python-layer.zip
 └── python/
     └── requests/
 ```
-Upload `python-layer.zip` as a **Lambda Layer** and attach it to your Python function.
+Upload `python-layer.zip` as a **Lambda Layer** and attach it to your Python function:
+```bash
+mkdir -p python
+pip install -r requirements.txt -t python/
+zip -r python-layer.zip python/
+aws lambda publish-layer-version \
+  --layer-name "wa-python-requests-layer" \
+  --zip-file "fileb://python-layer.zip" \
+  --compatible-runtimes "python3.12" "python3.13"
+```
 
 ---
 

@@ -2,7 +2,7 @@
   "name": "wa-demo-nodejs-zero-lib",
   "version": "1.0.0",
   "type": "module",
-  "description": "AWS Lambda Demonstration — Zero External Library (Vanilla Node.js 20/24 ESM)",
+  "description": "AWS Lambda Demonstration — Zero External Library (Vanilla Node.js 20.x-26.x ESM)",
   "main": "index.js",
   "scripts": {
     "test": "node test-local.js"
@@ -10,5 +10,7 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+    "author": "bapp",
+  "license": "ISC"
 }

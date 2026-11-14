@@ -1,6 +1,6 @@
 /**
- * AWS Lambda Demonstration Handler — With External Libraries (Node.js 24 ESM)
- * Runtime: Node.js 24.x
+ * AWS Lambda Demonstration Handler — With External Libraries (Node.js 20.x-26.x ESM)
+ * Runtime: Node.js 20.x / 22.x / 24.x / 26.x
  * Dependencies: @aws-sdk/client-s3, axios
  * 
  * Demonstrates:
@@ -17,11 +17,14 @@ import crypto from "node:crypto";
 let S3Client = null;
 let ListBucketsCommand = null;
 let axios = null;
+let hasNativeS3Sdk = false;
+let hasNativeAxios = false;
 
 try {
   const s3Module = await import("@aws-sdk/client-s3");
   S3Client = s3Module.S3Client;
   ListBucketsCommand = s3Module.ListBucketsCommand;
+  hasNativeS3Sdk = true;
 } catch {
   // Offline mock fallback
   S3Client = class MockS3Client {
@@ -40,6 +43,7 @@ try {
 try {
   const axiosModule = await import("axios");
   axios = axiosModule.default || axiosModule;
+  hasNativeAxios = true;
 } catch {
   // Native fetch fallback when axios is not installed locally
   axios = {
@@ -65,12 +69,14 @@ export const handler = async (event, context) => {
   // 1. Structured CloudWatch Log: Function Start & Context Details
   const requestMetadata = {
     level: "INFO",
-    message: "Lambda execution started (Node.js 24 With-Lib)",
+    message: "Lambda execution started (Node.js With-Lib)",
     requestId,
     functionName: context?.functionName || "wa-demo-nodejs-lib",
     functionVersion: context?.functionVersion || "$LATEST",
     memoryLimitInMB: context?.memoryLimitInMB || "128",
     nodeVersion: process.version,
+    hasNativeAxios,
+    hasNativeS3Sdk,
     isColdStart,
     executionCounter,
     initTimestamp: INIT_TIMESTAMP,
@@ -197,13 +203,17 @@ export const handler = async (event, context) => {
     },
     body: JSON.stringify({
       success: true,
-      message: "Node.js 24 (With-Lib) Lambda execution completed successfully",
+      message: "Node.js (With-Lib) Lambda execution completed successfully",
       data: {
         isColdStart,
         executionCounter,
         durationMs: executionDurationMs,
         externalProbe: externalStatus,
         s3Integration: s3Summary,
+        dependencySource: {
+          axios: hasNativeAxios ? "package/layer" : "offline-fetch-fallback",
+          s3Sdk: hasNativeS3Sdk ? "package/layer-or-runtime" : "offline-mock-fallback"
+        },
         runtime: `Node.js ${process.version}`
       },
       requestId

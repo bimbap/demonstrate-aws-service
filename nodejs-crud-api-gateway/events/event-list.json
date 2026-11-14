@@ -1,0 +1,11 @@
+{
+  "httpMethod": "GET",
+  "path": "/items",
+  "resource": "/items",
+  "pathParameters": null,
+  "queryStringParameters": null,
+  "headers": {},
+  "body": null,
+  "isBase64Encoded": false
+}
+
